@@ -2774,34 +2774,49 @@ function parsePProviderTF(lines, obj) {
 //  BET STRING PARSER (SBO style)
 // =============================================
 function parseBetString(bet, obj) {
-  // Odds: @X.XX atau @-X.XX
-  const oddsM = bet.match(/@([+-]?\d+(?:\.\d+)?)/);
-  if (oddsM) obj.odds = parseFloat(oddsM[1]);
-  const betNoOdds = bet.replace(/@[+-]?\d+(?:\.\d+)?/, '').trim();
+  // Parser betting dibuat lebih ketat dan aman supaya format seperti:
+  // Odd/Even Odd 0 @-1.13, Total Goal 4-6 0 @2.01, Over/Under Under 3 @1.21
+  // tidak salah terbaca sebagai market lain.
+  const originalBet = String(bet || '').trim();
 
-  // Try patterns
-  // 1X2
-  const p1x2 = betNoOdds.match(/^1X2\s+([12X])\s*([\d.-]*)/i);
-  if (p1x2) { obj.market = '1X2'; obj.pick = p1x2[1].toUpperCase(); obj.line = p1x2[2] ? parseFloat(p1x2[2]) : 0; return; }
+  // Odds: mendukung @2.01, @-1.13, @+1.95, serta koma desimal.
+  const oddsM = originalBet.match(/@\s*([+-]?\d+(?:[\.,]\d+)?)/);
+  if (oddsM) obj.odds = parseFloat(oddsM[1].replace(',', '.'));
 
-  // HT 1X2
-  const pHT1X2 = betNoOdds.match(/^(?:HT|Half\s*Time)\s+1X2\s+([12X])/i);
-  if (pHT1X2) { obj.market = 'HT1X2'; obj.pick = pHT1X2[1].toUpperCase(); return; }
+  // Bersihkan odds dari string betting. Ini bagian penting untuk kasus Odd/Even Odd 0 @-1.13.
+  let betNoOdds = originalBet
+    .replace(/@\s*[+-]?\d+(?:[\.,]\d+)?/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  // HT Over/Under
-  // Penting: format seperti "HT Over/Under Under 1.5" harus membaca pilihan terakhirnya,
-  // bukan kata "Over" dari nama market "Over/Under".
-  const pHTOU = betNoOdds.match(/^(?:HT|Half\s*Time)\s+(?:(?:Over\/Under|O\/U|Total\s*Goal)\s+)?(Over|Under|O|U)\s+([+-]?\d+(?:\.\d+)?)/i);
-  if (pHTOU) {
-    obj.market = 'HTOU';
-    obj.pick = /^O(?:ver)?$/i.test(pHTOU[1]) ? 'Over' : 'Under';
-    obj.line = parseFloat(pHTOU[2]);
+  // Helper angka desimal.
+  const num = '([+-]?\\d+(?:[\\.,]\\d+)?)';
+  const toFloat = v => parseFloat(String(v).replace(',', '.'));
+
+  // 1X2: contoh 1X2 1 0 @2.56
+  const p1x2 = betNoOdds.match(/^1X2\s+([12X])(?:\s+0)?\s*$/i);
+  if (p1x2) {
+    obj.market = '1X2';
+    obj.pick = p1x2[1].toUpperCase();
+    obj.line = 0;
     return;
   }
 
+  // Odd/Even / Genap Ganjil — taruh sebelum O/U agar tidak salah masuk market lain.
+  // Contoh:
+  // Odd/Even Odd 0 @-1.13
+  // Odd/Even Even 0 @1.95
+  // Odd 0 @1.90
+  // Ganjil 0 / Genap 0
+  const pOE = betNoOdds.match(/^(?:(?:Odd\s*\/\s*Even|OddEven|Even\s*\/\s*Odd|Genap\s*\/\s*Ganjil|Ganjil\s*\/\s*Genap)\s+)?(Odd|Even|Ganjil|Genap)(?:\s+0)?\s*$/i);
+  if (pOE) {
+    obj.market = 'ODDEVEN';
+    obj.pick = /^(Odd|Ganjil)$/i.test(pOE[1]) ? 'Odd' : 'Even';
+    obj.line = 0;
+    return;
+  }
 
   // Total Goal range: Total Goal 4-6 0 @2.01
-  // Artinya menang jika total gol FT masuk dalam rentang 4 sampai 6.
   const pTGRange = betNoOdds.match(/^Total\s*Goal\s+(\d+)\s*[-–]\s*(\d+)(?:\s+0)?\s*$/i);
   if (pTGRange) {
     const minGoal = parseInt(pTGRange[1], 10);
@@ -2814,32 +2829,40 @@ function parseBetString(bet, obj) {
     return;
   }
 
-  // Over/Under / Total Goal
-  // Contoh valid:
-  // - Over/Under Under 3 @1.21
-  // - Over/Under Over 3.25 @2.12
-  // - O/U Under 2.5
-  // - Total Goal Over 2.5
-  // - Under 3 / Over 2.5
-  const pOU = betNoOdds.match(/^(?:(?:Over\/Under|O\/U|Total\s*Goal)\s+)?(Over|Under|O|U)\s+([+-]?\d+(?:\.\d+)?)/i);
+  // HT 1X2
+  const pHT1X2 = betNoOdds.match(/^(?:HT|Half\s*Time)\s+1X2\s+([12X])(?:\s+0)?\s*$/i);
+  if (pHT1X2) { obj.market = 'HT1X2'; obj.pick = pHT1X2[1].toUpperCase(); return; }
+
+  // HT Over/Under. Membaca pilihan terakhir, bukan kata Over dari nama market Over/Under.
+  const pHTOU = betNoOdds.match(new RegExp('^(?:HT|Half\\s*Time)\\s+(?:(?:Over\\s*\\/\\s*Under|O\\s*\\/\\s*U|Total\\s*Goal)\\s+)?(Over|Under|O|U)\\s+' + num + '(?:\\s+0)?\\s*$', 'i'));
+  if (pHTOU) {
+    obj.market = 'HTOU';
+    obj.pick = /^O(?:ver)?$/i.test(pHTOU[1]) ? 'Over' : 'Under';
+    obj.line = toFloat(pHTOU[2]);
+    return;
+  }
+
+  // Over/Under / Total Goal over-under.
+  // Contoh: Over/Under Under 3, Over/Under Over 3.25, Total Goal Under 2.5.
+  const pOU = betNoOdds.match(new RegExp('^(?:(?:Over\\s*\\/\\s*Under|O\\s*\\/\\s*U|Total\\s*Goal)\\s+)?(Over|Under|O|U)\\s+' + num + '(?:\\s+0)?\\s*$', 'i'));
   if (pOU) {
     obj.market = 'OU';
     obj.pick = /^O(?:ver)?$/i.test(pOU[1]) ? 'Over' : 'Under';
-    obj.line = parseFloat(pOU[2]);
+    obj.line = toFloat(pOU[2]);
     return;
   }
 
-  // Handicap: AH 1/2 +/-X.X or Handicap Home/Away +/-X
-  const pAH = betNoOdds.match(/(?:AH|Handicap|HDP)\s+(Home|Away|1|2)\s*([+-]?[\d.]+)/i);
+  // Handicap: AH 1/2 +/-X.X atau Handicap Home/Away +/-X
+  const pAH = betNoOdds.match(new RegExp('(?:AH|Handicap|HDP)\\s+(Home|Away|1|2)\\s*' + num + '\\s*$', 'i'));
   if (pAH) {
     obj.market = 'HDP';
     obj.pick = /home|1/i.test(pAH[1]) ? 'Home' : 'Away';
-    obj.line = parseFloat(pAH[2]);
+    obj.line = toFloat(pAH[2]);
     return;
   }
 
-  // Handicap dengan nama tim: "Handicap Arema FC -0.5" / "Handicap Al Ain Abu Dhabi -0.5"
-  const pAHTeam = betNoOdds.match(/(?:AH|Handicap|HDP)\s+(.+?)\s*([+-]?\d+(?:\.\d+)?)\s*$/i);
+  // Handicap dengan nama tim: Handicap Arema FC -0.5 / Handicap Al Ain Abu Dhabi -0.5
+  const pAHTeam = betNoOdds.match(new RegExp('(?:AH|Handicap|HDP)\\s+(.+?)\\s*' + num + '\\s*$', 'i'));
   if (pAHTeam) {
     const teamText = pAHTeam[1].trim();
     const norm = v => String(v || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
@@ -2847,7 +2870,7 @@ function parseBetString(bet, obj) {
     const home = norm(obj.homeTeam);
     const away = norm(obj.awayTeam);
     obj.market = 'HDP';
-    obj.line = parseFloat(pAHTeam[2]);
+    obj.line = toFloat(pAHTeam[2]);
     if (picked && home && (picked === home || home.includes(picked) || picked.includes(home))) {
       obj.pick = 'Home';
       return;
@@ -2860,7 +2883,7 @@ function parseBetString(bet, obj) {
     return;
   }
 
-  // Correct Score: CS X-Y or Correct Score X:Y
+  // Correct Score: CS X-Y atau Correct Score X:Y
   const pCS = betNoOdds.match(/(?:Correct\s*Score|CS)\s+(\d+)[:\-](\d+)/i);
   if (pCS) { obj.market = 'CS'; obj.pick = pCS[1]+':'+pCS[2]; return; }
 
@@ -2876,20 +2899,7 @@ function parseBetString(bet, obj) {
   const pBTTS = betNoOdds.match(/(?:BTTS|Both\s*Teams?\s*(?:To\s*)?Score)\s+(Yes|No)/i);
   if (pBTTS) { obj.market = 'BTTS'; obj.pick = pBTTS[1]; return; }
 
-  // Odd/Even / Genap Ganjil
-  // Contoh valid:
-  // - Odd/Even Odd 0 @-1.13
-  // - Odd/Even Even 0
-  // - Odd 0 / Even 0
-  // - Ganjil 0 / Genap 0
-  const pOE = betNoOdds.match(/^(?:(?:Odd\s*\/\s*Even|OddEven|Genap\s*\/\s*Ganjil|Ganjil\s*\/\s*Genap)\s+)?(Odd|Even|Ganjil|Genap)(?:\s+0)?\s*$/i);
-  if (pOE) {
-    obj.market = 'ODDEVEN';
-    obj.pick = /odd|ganjil/i.test(pOE[1]) ? 'Odd' : 'Even';
-    return;
-  }
-
-  // Fallback: whole bet string
+  // Fallback: whole bet string setelah odds dibersihkan.
   obj.market = betNoOdds;
   obj.pick = '';
   obj.parseErrors.push('Market tidak dikenali: ' + betNoOdds);
