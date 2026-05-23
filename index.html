@@ -2774,10 +2774,10 @@ function parsePProviderTF(lines, obj) {
 //  BET STRING PARSER (SBO style)
 // =============================================
 function parseBetString(bet, obj) {
-  // Odds: @X.XX
+  // Odds: @X.XX atau @-X.XX
   const oddsM = bet.match(/@([+-]?\d+(?:\.\d+)?)/);
   if (oddsM) obj.odds = parseFloat(oddsM[1]);
-  const betNoOdds = bet.replace(/@[\d.]+/, '').trim();
+  const betNoOdds = bet.replace(/@[+-]?\d+(?:\.\d+)?/, '').trim();
 
   // Try patterns
   // 1X2
