@@ -2777,15 +2777,28 @@ function parseBetString(bet, obj) {
   if (pHT1X2) { obj.market = 'HT1X2'; obj.pick = pHT1X2[1].toUpperCase(); return; }
 
   // HT Over/Under
-  const pHTOU = betNoOdds.match(/^(?:HT|Half\s*Time)\s+(?:Over|Under)\s+([\d.]+)/i);
-  if (pHTOU) { obj.market = 'HTOU'; obj.pick = betNoOdds.match(/over/i) ? 'Over' : 'Under'; obj.line = parseFloat(pHTOU[1]); return; }
+  // Penting: format seperti "HT Over/Under Under 1.5" harus membaca pilihan terakhirnya,
+  // bukan kata "Over" dari nama market "Over/Under".
+  const pHTOU = betNoOdds.match(/^(?:HT|Half\s*Time)\s+(?:(?:Over\/Under|O\/U|Total\s*Goal)\s+)?(Over|Under|O|U)\s+([+-]?\d+(?:\.\d+)?)/i);
+  if (pHTOU) {
+    obj.market = 'HTOU';
+    obj.pick = /^O(?:ver)?$/i.test(pHTOU[1]) ? 'Over' : 'Under';
+    obj.line = parseFloat(pHTOU[2]);
+    return;
+  }
 
   // Over/Under / Total Goal
-  const pOU = betNoOdds.match(/(?:Over|Under|O\/U|Total\s*Goal\s*(?:Over|Under))\s+([\d.]+)/i);
+  // Contoh valid:
+  // - Over/Under Under 3 @1.21
+  // - Over/Under Over 3.25 @2.12
+  // - O/U Under 2.5
+  // - Total Goal Over 2.5
+  // - Under 3 / Over 2.5
+  const pOU = betNoOdds.match(/^(?:(?:Over\/Under|O\/U|Total\s*Goal)\s+)?(Over|Under|O|U)\s+([+-]?\d+(?:\.\d+)?)/i);
   if (pOU) {
     obj.market = 'OU';
-    obj.pick = /over|^o\//i.test(betNoOdds) ? 'Over' : 'Under';
-    obj.line = parseFloat(pOU[1]);
+    obj.pick = /^O(?:ver)?$/i.test(pOU[1]) ? 'Over' : 'Under';
+    obj.line = parseFloat(pOU[2]);
     return;
   }
 
