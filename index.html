@@ -898,6 +898,7 @@ body {
   font-size: 12px;
   color: var(--text-mid);
   line-height: 1.6;
+  white-space: pre-line;
 }
 
 .analysis-detail {
@@ -908,6 +909,206 @@ body {
 }
 
 .analysis-detail.show { display: block; }
+
+
+/* ========== LIVECHAT COPY TEXT ========== */
+.member-reply-box {
+  margin-top: 12px;
+  background: rgba(0,245,255,0.035);
+  border: 1px solid rgba(0,245,255,0.16);
+  border-left: 2px solid var(--green-neon);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.member-reply-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.member-reply-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--green-neon);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.member-reply-copy {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--bg-void);
+  background: linear-gradient(135deg, var(--green-neon), var(--green-dim));
+  border: 1px solid var(--green-neon);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.member-reply-copy:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(0,255,136,0.35);
+}
+
+.member-reply-text {
+  width: 100%;
+  min-height: 92px;
+  background: rgba(1,8,18,0.9);
+  border: 1px solid rgba(138,164,204,0.18);
+  border-radius: 7px;
+  padding: 10px 11px;
+  color: #d8ecff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+
+.member-reply-text:focus {
+  border-color: rgba(0,245,255,0.45);
+  box-shadow: 0 0 14px rgba(0,245,255,0.08);
+}
+
+
+/* ========== PARLAY OVERALL SUMMARY ========== */
+.parlay-overall-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(0,245,255,0.055), rgba(0,255,136,0.035));
+  border: 1px solid rgba(0,245,255,0.22);
+  border-left: 3px solid var(--green-neon);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.parlay-overall-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--green-neon), transparent);
+  opacity: 0.75;
+}
+
+.parlay-overall-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.parlay-overall-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--green-neon);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(0,255,136,0.35);
+}
+
+.parlay-overall-sub {
+  font-size: 12px;
+  color: var(--text-mid);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.parlay-overall-status {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 7px 11px;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+
+.parlay-status-win { color: var(--green-neon); border: 1px solid rgba(0,255,136,0.45); background: rgba(0,255,136,0.10); }
+.parlay-status-lose { color: var(--red-neon); border: 1px solid rgba(255,61,90,0.45); background: rgba(255,61,90,0.10); }
+.parlay-status-half { color: var(--yellow); border: 1px solid rgba(255,224,51,0.45); background: rgba(255,224,51,0.10); }
+.parlay-status-pending { color: var(--text-mid); border: 1px solid rgba(138,164,204,0.30); background: rgba(138,164,204,0.08); }
+
+.parlay-overall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.parlay-overall-cell {
+  background: rgba(1,8,18,0.68);
+  border: 1px solid rgba(0,245,255,0.12);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.parlay-overall-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.parlay-overall-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-bright);
+  line-height: 1.25;
+}
+
+.parlay-leg-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.parlay-leg-summary {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(138,164,204,0.13);
+  border-radius: 8px;
+  padding: 10px 11px;
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+.parlay-leg-summary strong {
+  color: var(--text-bright);
+}
+
+.parlay-leg-summary .leg-factor {
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+}
+
+.parlay-overall-note {
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(0,245,255,0.13);
+  border-left: 2px solid var(--cyan);
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: var(--text-mid);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-line;
+  margin-bottom: 12px;
+}
 
 .detail-row {
   display: flex;
@@ -2597,6 +2798,28 @@ function parseBetString(bet, obj) {
     return;
   }
 
+  // Handicap dengan nama tim: "Handicap Arema FC -0.5" / "Handicap Al Ain Abu Dhabi -0.5"
+  const pAHTeam = betNoOdds.match(/(?:AH|Handicap|HDP)\s+(.+?)\s*([+-]?\d+(?:\.\d+)?)\s*$/i);
+  if (pAHTeam) {
+    const teamText = pAHTeam[1].trim();
+    const norm = v => String(v || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+    const picked = norm(teamText);
+    const home = norm(obj.homeTeam);
+    const away = norm(obj.awayTeam);
+    obj.market = 'HDP';
+    obj.line = parseFloat(pAHTeam[2]);
+    if (picked && home && (picked === home || home.includes(picked) || picked.includes(home))) {
+      obj.pick = 'Home';
+      return;
+    }
+    if (picked && away && (picked === away || away.includes(picked) || picked.includes(away))) {
+      obj.pick = 'Away';
+      return;
+    }
+    obj.parseErrors.push('Tim handicap tidak cocok dengan Home/Away: ' + teamText);
+    return;
+  }
+
   // Correct Score: CS X-Y or Correct Score X:Y
   const pCS = betNoOdds.match(/(?:Correct\s*Score|CS)\s+(\d+)[:\-](\d+)/i);
   if (pCS) { obj.market = 'CS'; obj.pick = pCS[1]+':'+pCS[2]; return; }
@@ -2950,6 +3173,452 @@ function checkOddEven(r) {
   return r;
 }
 
+
+function cleanReasonForMember(reason) {
+  return String(reason || '-')
+    .replace(/\s*Bettingan\s+Rp[\s\S]*$/i, '')
+    .trim();
+}
+
+function statusMemberLabel(status) {
+  const map = {
+    'WIN': 'Menang',
+    'LOSE': 'Kalah',
+    'HALF WIN': 'Menang Setengah',
+    'HALF LOSE': 'Kalah Setengah',
+    'REFUND': 'Seri / Refund',
+    'VOID': 'Void / Modal Kembali',
+    'PENDING': 'Pending',
+    'INVALID DATA': 'Data Tidak Valid'
+  };
+  return map[status] || status || '-';
+}
+
+function outcomeIdToText(outcome) {
+  const map = {
+    'WIN': 'Menang',
+    'LOSE': 'Kalah',
+    'REFUND': 'Seri / Refund',
+    'PENDING': 'Pending',
+    'INVALID DATA': 'Data Tidak Valid'
+  };
+  return map[outcome] || outcome || '-';
+}
+
+function formatPickForMember(r) {
+  const market = String(r.market || '').toUpperCase();
+  const pick = String(r.pick || '').toUpperCase();
+  if (market === '1X2' || market === 'HT1X2') {
+    if (pick === '1' || pick === 'HOME') return '1 (Home)';
+    if (pick === '2' || pick === 'AWAY') return '2 (Away)';
+    if (pick === 'X' || pick === 'DRAW') return 'X (Draw)';
+  }
+  return `${r.pick || '-'}${r.line !== null && r.line !== undefined ? ' ' + r.line : ''}`.trim();
+}
+
+function selectedTeamName(r) {
+  const pick = String(r.pick || '').toLowerCase();
+  if (pick === '1' || pick === 'home') return r.homeTeam || 'Home';
+  if (pick === '2' || pick === 'away') return r.awayTeam || 'Away';
+  return '';
+}
+
+function scoreText(score) {
+  return score ? `${score.home}:${score.away}` : '-';
+}
+
+function isQuarterLine(line) {
+  if (line === null || line === undefined || Number.isNaN(Number(line))) return false;
+  const abs = Math.abs(Number(line));
+  const dec = abs - Math.floor(abs);
+  return Math.abs(dec - 0.25) < 0.001 || Math.abs(dec - 0.75) < 0.001;
+}
+
+function splitOULines(line) {
+  const n = Number(line);
+  return [Math.floor(n * 2) / 2, Math.ceil(n * 2) / 2];
+}
+
+function formatLineForMember(line) {
+  const n = Number(line);
+  if (!Number.isFinite(n)) return String(line);
+  return Number.isInteger(n) ? String(n) : String(n).replace('.', ',').replace(',', '.');
+}
+
+function buildOUExplanation(r, scoreKind='FT') {
+  const score = scoreKind === 'HT' ? r.halfTimeScore : r.fullTimeScore;
+  const total = score ? score.home + score.away : null;
+  const pick = String(r.pick || '').toLowerCase();
+  const pickText = pick ? pick.charAt(0).toUpperCase() + pick.slice(1) : (r.pick || '-');
+  const scoreLabel = scoreKind === 'HT' ? 'HT' : 'FT';
+  const base = `Pilihan ${pickText} ${r.line}. Skor ${scoreLabel} ${scoreText(score)}, total gol ${total}.`;
+
+  if (isQuarterLine(r.line) && total !== null && typeof computeOULine === 'function') {
+    const [line1, line2] = splitOULines(r.line);
+    const res1 = computeOULine(total, line1, pick);
+    const res2 = computeOULine(total, line2, pick);
+    return `${base} Line ${r.line} dihitung menjadi ${pickText} ${line1} dan ${pickText} ${line2}. ${pickText} ${line1} = ${outcomeIdToText(res1)}, ${pickText} ${line2} = ${outcomeIdToText(res2)}. Maka hasil taruhan menjadi ${statusMemberLabel(r.status)}.`;
+  }
+
+  return `${base} Maka hasil taruhan menjadi ${statusMemberLabel(r.status)}.`;
+}
+
+function buildHDPExplanation(r) {
+  const ft = r.fullTimeScore;
+  const pickRaw = String(r.pick || '').toLowerCase();
+  const side = (pickRaw === 'home' || pickRaw === '1') ? 'Home' : 'Away';
+  const team = side === 'Home' ? r.homeTeam : r.awayTeam;
+  const base = `Pilihan Handicap ${side} (${team || side}) ${r.line}. Skor FT ${scoreText(ft)}.`;
+
+  if (isQuarterLine(r.line) && ft && typeof computeHDPLine === 'function') {
+    const h = Number(r.line);
+    const h1 = h > 0 ? Math.floor(h * 2) / 2 : Math.ceil(h * 2) / 2;
+    const h2 = h > 0 ? Math.ceil(h * 2) / 2 : Math.floor(h * 2) / 2;
+    const res1 = computeHDPLine(ft.home, ft.away, h1, pickRaw);
+    const res2 = computeHDPLine(ft.home, ft.away, h2, pickRaw);
+    return `${base} Line handicap ${r.line} dihitung menjadi ${h1} dan ${h2}. Bagian ${h1} = ${outcomeIdToText(res1)}, bagian ${h2} = ${outcomeIdToText(res2)}. Maka hasil taruhan menjadi ${statusMemberLabel(r.status)}.`;
+  }
+
+  return `${base} Maka hasil taruhan menjadi ${statusMemberLabel(r.status)}.`;
+}
+
+function buildBetExplanationForMember(r) {
+  const market = String(r.market || '').toUpperCase();
+  const statusText = statusMemberLabel(r.status);
+
+  if (market === 'OU') return buildOUExplanation(r, 'FT');
+  if (market === 'HTOU') return buildOUExplanation(r, 'HT');
+  if (market === 'HDP') return buildHDPExplanation(r);
+
+  if (market === '1X2') {
+    const ft = r.fullTimeScore;
+    const pickText = formatPickForMember(r);
+    const team = selectedTeamName(r);
+    const ending = r.status === 'WIN' && team ? `${team} menang.` : `Hasil akhirnya ${statusText}.`;
+    return `Pilihan 1X2 ${pickText}. Skor FT ${scoreText(ft)}. ${ending}`;
+  }
+
+  if (market === 'HT1X2') {
+    return `Pilihan HT 1X2 ${formatPickForMember(r)}. Skor HT ${scoreText(r.halfTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  if (market === 'CS') {
+    return `Pilihan Correct Score ${r.pick}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  if (market === 'DC') {
+    return `Pilihan Double Chance ${r.pick}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  if (market === 'DNB') {
+    return `Pilihan Draw No Bet ${formatPickForMember(r)}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  if (market === 'BTTS') {
+    return `Pilihan BTTS ${r.pick}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  if (market === 'ODDEVEN') {
+    return `Pilihan Odd/Even ${r.pick}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  return cleanReasonForMember(r.reason);
+}
+
+function buildMoneyExplanationForMember(r) {
+  const stake = r.stake ? formatRupiah(r.stake) : '-';
+  const payout = r.payout !== null && r.payout !== undefined ? formatRupiah(r.payout) : '-';
+  const profitAbs = r.profit !== null && r.profit !== undefined ? formatRupiah(Math.abs(r.profit)) : '-';
+  const profitSigned = r.profit !== null && r.profit !== undefined ? formatRupiah(r.profit) : '-';
+
+  if (r.status === 'WIN') {
+    return `Dengan bettingan ${stake}, maka kemenangan yang didapat keseluruhan adalah ${payout}.\nDengan kemenangan profit nya ${profitAbs}.`;
+  }
+
+  if (r.status === 'HALF WIN') {
+    return `Dengan bettingan ${stake}, maka hasil yang didapat keseluruhan adalah ${payout}.\nDengan kemenangan profit bersih ${profitAbs}.`;
+  }
+
+  if (r.status === 'HALF LOSE') {
+    return `Dengan bettingan ${stake}, maka dana yang kembali adalah ${payout}.\nDengan kekalahan setengah, kerugian nya ${profitAbs}.`;
+  }
+
+  if (r.status === 'LOSE') {
+    return `Dengan bettingan ${stake}, maka tidak ada kemenangan yang didapat.\nTotal kekalahan adalah ${profitAbs}.`;
+  }
+
+  if (r.status === 'REFUND' || r.status === 'VOID') {
+    return `Dengan bettingan ${stake}, maka dana yang kembali adalah ${payout}.\nProfit/Loss nya ${profitSigned}.`;
+  }
+
+  if (r.status === 'PENDING') {
+    return `Bettingan ${stake} belum bisa dihitung sampai hasil pertandingan lengkap tersedia.`;
+  }
+
+  if (r.status === 'INVALID DATA') {
+    return `Mohon cek kembali data pertandingan, market, odds, dan hasil skor yang diinput.`;
+  }
+
+  return `Bettingan: ${stake}\nPayout: ${payout}\nProfit/Loss: ${profitSigned}.`;
+}
+
+function buildReadableAnalysis(r) {
+  const statusText = statusMemberLabel(r.status);
+  const explain = buildBetExplanationForMember(r);
+
+  if (r.status === 'PENDING') {
+    return `Untuk Hasil Pertandingan Adalah: Pending.\n${explain}\n${buildMoneyExplanationForMember(r)}`;
+  }
+  if (r.status === 'INVALID DATA') {
+    return `Untuk Hasil Pertandingan Adalah: Data Tidak Valid.\n${explain}\n${buildMoneyExplanationForMember(r)}`;
+  }
+
+  return `Untuk Hasil Pertandingan Adalah: ${statusText}.\n${explain}\n${buildMoneyExplanationForMember(r)}`;
+}
+
+function generateMemberReply(r) {
+  return buildReadableAnalysis(r);
+}
+
+function copyMemberReply(idx) {
+  const el = document.getElementById('memberReply-' + idx);
+  if (!el) return;
+  const text = el.value || el.textContent || '';
+
+  const markCopied = () => {
+    const btn = document.getElementById('copyMemberReplyBtn-' + idx);
+    if (btn) {
+      const oldText = btn.textContent;
+      btn.textContent = '✅ TERSALIN';
+      setTimeout(() => { btn.textContent = oldText; }, 1400);
+    }
+    toast('Teks livechat berhasil disalin', 'success');
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(markCopied).catch(() => {
+      el.focus();
+      el.select();
+      document.execCommand('copy');
+      markCopied();
+    });
+  } else {
+    el.focus();
+    el.select();
+    document.execCommand('copy');
+    markCopied();
+  }
+}
+
+
+// =============================================
+//  OVERALL PARLAY SUMMARY
+// =============================================
+function getEffectiveParlayLeg(r) {
+  const odds = Number(r.odds || 0);
+  const status = String(r.status || '').toUpperCase();
+
+  if (!Number.isFinite(odds) || odds <= 0) {
+    return { valid: false, factor: null, label: 'Odds tidak valid', paymentText: '-', rawOdds: odds };
+  }
+
+  if (status === 'WIN') {
+    return { valid: true, factor: odds, label: 'Menang Full', paymentText: formatOdds(odds), rawOdds: odds };
+  }
+  if (status === 'HALF WIN') {
+    const factor = ((odds - 1) / 2) + 1;
+    return { valid: true, factor, label: 'Menang Setengah', paymentText: formatOdds(factor), rawOdds: odds };
+  }
+  if (status === 'HALF LOSE') {
+    return { valid: true, factor: 0.5, label: 'Kalah Setengah', paymentText: '0.5', rawOdds: odds };
+  }
+  if (status === 'REFUND' || status === 'VOID') {
+    return { valid: true, factor: 1, label: 'Seri / Refund', paymentText: '1', rawOdds: odds };
+  }
+  if (status === 'LOSE') {
+    return { valid: true, factor: 0, label: 'Kalah Full', paymentText: '0', rawOdds: odds };
+  }
+  if (status === 'PENDING') {
+    return { valid: false, factor: null, label: 'Pending', paymentText: '-', rawOdds: odds };
+  }
+  return { valid: false, factor: null, label: 'Data Tidak Valid', paymentText: '-', rawOdds: odds };
+}
+
+function getParlayOverallStake(list) {
+  const ticketStake = list.find(r => r.stakeSource === 'ticket' && Number(r.stake) > 0);
+  if (ticketStake) return Number(ticketStake.stake);
+  const firstStake = list.find(r => Number(r.stake) > 0);
+  if (firstStake) return Number(firstStake.stake);
+  return getDefaultStake() || 0;
+}
+
+function buildParlayOverallData(list) {
+  const stake = getParlayOverallStake(list);
+  const legs = list.map((r, index) => {
+    const eff = getEffectiveParlayLeg(r);
+    return { index, ticket: r, ...eff };
+  });
+
+  const hasInvalid = legs.some(l => !l.valid && String(l.ticket.status).toUpperCase() === 'INVALID DATA');
+  const hasPending = legs.some(l => !l.valid && String(l.ticket.status).toUpperCase() === 'PENDING');
+  const allComputable = !hasInvalid && !hasPending && legs.every(l => l.valid);
+
+  let finalFactor = null;
+  if (allComputable) {
+    finalFactor = legs.reduce((acc, l) => acc * Number(l.factor || 0), 1);
+  }
+
+  const payout = allComputable ? stake * finalFactor : null;
+  const profit = allComputable ? payout - stake : null;
+
+  let overallLabel = 'Belum Bisa Dihitung';
+  let statusClass = 'parlay-status-pending';
+  if (hasInvalid) {
+    overallLabel = 'Data Parlay Belum Valid';
+  } else if (hasPending) {
+    overallLabel = 'Parlay Pending';
+  } else if (allComputable) {
+    if (finalFactor === 0) { overallLabel = 'Kalah Full'; statusClass = 'parlay-status-lose'; }
+    else if (finalFactor > 1) { overallLabel = 'Menang / Profit'; statusClass = 'parlay-status-win'; }
+    else if (finalFactor === 1) { overallLabel = 'Seri / Modal Kembali'; statusClass = 'parlay-status-half'; }
+    else { overallLabel = 'Kalah Sebagian'; statusClass = 'parlay-status-half'; }
+  }
+
+  const winningLegs = legs.filter(l => l.valid && l.factor > 0 && String(l.ticket.status).toUpperCase() !== 'LOSE');
+  const winningFactor = winningLegs.length ? winningLegs.reduce((acc, l) => acc * Number(l.factor || 0), 1) : 0;
+  const losingLegs = legs.filter(l => String(l.ticket.status).toUpperCase() === 'LOSE');
+  const halfLoseLegs = legs.filter(l => String(l.ticket.status).toUpperCase() === 'HALF LOSE');
+  const halfWinLegs = legs.filter(l => String(l.ticket.status).toUpperCase() === 'HALF WIN');
+
+  let conclusion = '';
+  if (hasInvalid) {
+    conclusion = 'Ada partai yang belum bisa diproses karena market atau data tidak valid. Perbaiki dulu partai yang INVALID agar inti parlay bisa dihitung.';
+  } else if (hasPending) {
+    conclusion = 'Ada partai yang masih pending, sehingga hasil akhir parlay belum bisa dipastikan.';
+  } else if (losingLegs.length) {
+    conclusion = `Ada ${losingLegs.length} partai yang kalah full, sehingga tiket parlay otomatis menjadi KALAH FULL. Walaupun partai lain menang, odds pembayaran akhir menjadi 0.`;
+  } else if (halfLoseLegs.length) {
+    conclusion = `Tidak ada partai kalah full, tetapi ada ${halfLoseLegs.length} partai kalah setengah. Maka odds pembayaran akhir tetap dihitung dengan faktor 0.5 untuk partai tersebut.`;
+  } else if (halfWinLegs.length) {
+    conclusion = `Semua partai aman dan ada ${halfWinLegs.length} partai menang setengah. Odds pembayaran akhir memakai rumus (odds - 1) / 2 + 1 untuk partai menang setengah.`;
+  } else {
+    conclusion = 'Semua partai menang full, sehingga seluruh odds dikalikan penuh.';
+  }
+
+  return { stake, legs, allComputable, hasInvalid, hasPending, finalFactor, winningFactor, payout, profit, overallLabel, statusClass, conclusion };
+}
+
+function formatMatchName(r) {
+  return `${r.homeTeam || '?'} vs ${r.awayTeam || '?'}`;
+}
+
+function buildParlayMemberReply(data) {
+  const lines = [];
+  lines.push(`INTI HASIL BETTINGAN PARLAY: ${data.overallLabel.toUpperCase()}.`);
+  lines.push(`Jumlah partai: ${data.legs.length}.`);
+  lines.push(`Nilai bettingan: ${formatRupiah(data.stake)}.`);
+  lines.push('');
+  lines.push('Rincian partai dan odds pembayaran:');
+
+  data.legs.forEach((leg, i) => {
+    const r = leg.ticket;
+    const pickText = formatPickForMember(r);
+    lines.push(`${i + 1}. ${formatMatchName(r)} — ${r.market || '-'} ${pickText} @${formatOdds(r.odds)} = ${leg.label}, faktor pembayaran ${leg.paymentText}.`);
+  });
+
+  lines.push('');
+  if (data.allComputable) {
+    lines.push(`Odds kemenangan yang masih aktif: ${formatOdds(data.winningFactor)}.`);
+    lines.push(`Odds pembayaran akhir parlay: ${formatOdds(data.finalFactor)}.`);
+    lines.push(`Total dana kembali: ${formatRupiah(data.payout)}.`);
+    lines.push(`Profit/Loss akhir: ${formatRupiah(data.profit)}.`);
+  } else {
+    lines.push('Odds pembayaran akhir belum bisa dihitung karena masih ada data pending atau invalid.');
+  }
+  lines.push('');
+  lines.push(`Kesimpulan: ${data.conclusion}`);
+  return lines.join('\n');
+}
+
+function copyParlaySummary() {
+  const el = document.getElementById('parlayOverallReply');
+  if (!el) return;
+  const text = el.value || el.textContent || '';
+
+  const done = () => {
+    const btn = document.getElementById('copyParlaySummaryBtn');
+    if (btn) {
+      const old = btn.textContent;
+      btn.textContent = '✅ TERSALIN';
+      setTimeout(() => { btn.textContent = old; }, 1400);
+    }
+    toast('Inti parlay berhasil disalin', 'success');
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(() => {
+      el.focus(); el.select(); document.execCommand('copy'); done();
+    });
+  } else {
+    el.focus(); el.select(); document.execCommand('copy'); done();
+  }
+}
+
+function buildParlayOverallCard(list) {
+  if (!Array.isArray(list) || list.length <= 1) return '';
+  const data = buildParlayOverallData(list);
+  const reply = buildParlayMemberReply(data);
+
+  const legList = data.legs.map((leg, i) => {
+    const r = leg.ticket;
+    const cls = statusToClass(r.status);
+    const pickText = formatPickForMember(r);
+    return `
+      <div class="parlay-leg-summary">
+        <strong>#${i + 1} ${escapeHtml(formatMatchName(r))}</strong><br>
+        Market: ${escapeHtml(r.market || '-')} · Pick: ${escapeHtml(pickText)} · Odds: @${escapeHtml(formatOdds(r.odds))}<br>
+        Hasil: <span class="status-${cls}">${escapeHtml(leg.label)}</span> · <span class="leg-factor">Faktor: ${escapeHtml(leg.paymentText)}</span>
+      </div>`;
+  }).join('');
+
+  const payoutText = data.allComputable ? formatRupiah(data.payout) : '-';
+  const profitText = data.allComputable ? formatRupiah(data.profit) : '-';
+  const finalFactorText = data.allComputable ? formatOdds(data.finalFactor) : '-';
+  const winningFactorText = data.allComputable ? formatOdds(data.winningFactor) : '-';
+  const profitClass = data.profit > 0 ? 'profit-positive' : data.profit < 0 ? 'profit-negative' : 'profit-neutral';
+
+  return `
+    <div class="parlay-overall-card">
+      <div class="parlay-overall-head">
+        <div>
+          <div class="parlay-overall-title">🧾 INTI HASIL BETTINGAN PARLAY</div>
+          <div class="parlay-overall-sub">Ringkasan gabungan semua partai, termasuk odds tiap tim dan odds pembayaran akhir.</div>
+        </div>
+        <div class="parlay-overall-status ${data.statusClass}">${escapeHtml(data.overallLabel)}</div>
+      </div>
+
+      <div class="parlay-overall-grid">
+        <div class="parlay-overall-cell"><div class="parlay-overall-label">Jumlah Partai</div><div class="parlay-overall-value">${data.legs.length}</div></div>
+        <div class="parlay-overall-cell"><div class="parlay-overall-label">Bettingan Parlay</div><div class="parlay-overall-value">${formatRupiah(data.stake)}</div></div>
+        <div class="parlay-overall-cell"><div class="parlay-overall-label">Odds Menang Aktif</div><div class="parlay-overall-value">${winningFactorText}</div></div>
+        <div class="parlay-overall-cell"><div class="parlay-overall-label">Odds Bayar Akhir</div><div class="parlay-overall-value">${finalFactorText}</div></div>
+        <div class="parlay-overall-cell"><div class="parlay-overall-label">Total Return</div><div class="parlay-overall-value">${payoutText}</div></div>
+        <div class="parlay-overall-cell"><div class="parlay-overall-label">Profit / Loss</div><div class="parlay-overall-value ${profitClass}">${profitText}</div></div>
+      </div>
+
+      <div class="parlay-leg-list">${legList}</div>
+      <div class="parlay-overall-note">${escapeHtml(data.conclusion)}</div>
+
+      <div class="member-reply-box" style="margin-top:0">
+        <div class="member-reply-head">
+          <div class="member-reply-title">💬 TEKS INTI PARLAY UNTUK MEMBER LIVECHAT</div>
+          <button class="member-reply-copy" id="copyParlaySummaryBtn" onclick="copyParlaySummary()">📋 SALIN INTI PARLAY</button>
+        </div>
+        <textarea class="member-reply-text" id="parlayOverallReply" readonly style="min-height:170px">${escapeHtml(reply)}</textarea>
+      </div>
+    </div>`;
+}
+
 // =============================================
 //  RENDER RESULTS
 // =============================================
@@ -2981,7 +3650,8 @@ function renderResults() {
     return;
   }
 
-  grid.innerHTML = filtered.map((r, i) => buildCard(r, i)).join('');
+  const parlaySummary = currentFilter === 'all' && results.length > 1 ? buildParlayOverallCard(results) : '';
+  grid.innerHTML = parlaySummary + filtered.map((r, i) => buildCard(r, i)).join('');
 }
 
 function statusToClass(status) {
@@ -3006,6 +3676,7 @@ function buildCard(r, idx) {
   const pickDisplay = r.pick || '-';
   const lineDisplay = r.line !== null && r.line !== undefined ? r.line : '';
   const details = (r.details || []).map(d => `<div class="detail-row"><span>${d[0]}</span><span>${d[1]}</span></div>`).join('');
+  const memberReply = generateMemberReply(r);
   const teamDisplay = r.homeTeam && r.awayTeam ? `${r.homeTeam} <span style="color:var(--text-dim)">vs</span> ${r.awayTeam}` : (r.homeTeam || r.awayTeam || 'Unknown Match');
 
   return `
@@ -3060,10 +3731,18 @@ function buildCard(r, idx) {
 
       <div class="analysis-box">
         <div class="analysis-title">🧠 ANALISIS</div>
-        <div class="analysis-text">${r.reason || '-'}</div>
+        <div class="analysis-text">${escapeHtml(buildReadableAnalysis(r))}</div>
         <div class="analysis-detail" id="detail-${idx}">
           ${details}
         </div>
+      </div>
+
+      <div class="member-reply-box">
+        <div class="member-reply-head">
+          <div class="member-reply-title">💬 TEKS SIAP KIRIM KE MEMBER</div>
+          <button class="member-reply-copy" id="copyMemberReplyBtn-${idx}" onclick="copyMemberReply(${idx})">📋 SALIN</button>
+        </div>
+        <textarea class="member-reply-text" id="memberReply-${idx}" readonly>${escapeHtml(memberReply)}</textarea>
       </div>
     </div>
     <div class="card-footer">
@@ -3139,7 +3818,7 @@ function buildAnalysisPanel(r, i) {
     <div class="analysis-box" style="border-left-color:var(--${cls==='win'?'green-neon':cls==='lose'?'red-neon':'cyan'})">
       <div class="analysis-title">🔬 DETAIL PERHITUNGAN</div>
       <div style="margin-bottom:8px">${details}</div>
-      <div class="analysis-text" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-subtle)"><strong style="color:var(--text-bright)">Kesimpulan:</strong><br>${r.reason||'-'}</div>
+      <div class="analysis-text" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-subtle)"><strong style="color:var(--text-bright)">Kesimpulan Mudah Dipahami:</strong><br>${escapeHtml(buildReadableAnalysis(r))}</div>
     </div>
     ${r.parseErrors&&r.parseErrors.length?`<div style="margin-top:8px;color:var(--yellow);font-size:11px;font-family:'Share Tech Mono',monospace">⚠ Parse Warnings: ${r.parseErrors.join(', ')}</div>`:''}
   </div>`;
