@@ -2339,19 +2339,31 @@ function extractStakeFromRaw(raw) {
   return null;
 }
 
+function getOddsPayoutMultiplier(odds) {
+  const n = Number(odds);
+  if (!Number.isFinite(n) || n === 0) return null;
+  // Odds minus seperti @-1.13 umum muncul di format Indonesia/Malay.
+  // Agar payout tidak menjadi minus, nilai minus dikonversi menjadi return decimal:
+  // stake + (stake / abs(odds)) = stake * (1 + 1/abs(odds)).
+  if (n < 0) return 1 + (1 / Math.abs(n));
+  return n;
+}
+
 function calculateBetMoney(status, stake, odds) {
-  if (!stake || !odds || status === 'PENDING' || status === 'INVALID DATA') {
+  const oddsMultiplier = getOddsPayoutMultiplier(odds);
+  if (!stake || !oddsMultiplier || status === 'PENDING' || status === 'INVALID DATA') {
     return { payout: null, profit: null, note: 'Payout belum dihitung karena data belum settled / tidak valid.' };
   }
 
   let payout = null;
   let note = '';
+  const oddsNote = Number(odds) < 0 ? `odds minus ${odds} dikonversi menjadi multiplier ${oddsMultiplier.toFixed(4)}` : 'stake x odds';
 
   if (status === 'WIN') {
-    payout = stake * odds;
-    note = 'WIN: stake x odds';
+    payout = stake * oddsMultiplier;
+    note = 'WIN: ' + oddsNote;
   } else if (status === 'HALF WIN') {
-    payout = (stake / 2 * odds) + (stake / 2);
+    payout = (stake / 2 * oddsMultiplier) + (stake / 2);
     note = 'HALF WIN: 50% stake menang, 50% stake refund';
   } else if (status === 'HALF LOSE') {
     payout = stake / 2;
@@ -2705,7 +2717,7 @@ function parseProviderAP(lines, obj) {
     if (marketM) { obj.market = normalizeMarket(marketM[1].trim()); continue; }
     const selM = l.match(/^Selection\s*:\s*(.+)$/i);
     if (selM) { obj.pick = selM[1].trim(); continue; }
-    const oddsM = l.match(/^Odds\s*:\s*([\d.]+)$/i);
+    const oddsM = l.match(/^Odds\s*:\s*([+-]?\d+(?:\.\d+)?)$/i);
     if (oddsM) { obj.odds = parseFloat(oddsM[1]); continue; }
     const htM = l.match(/^HT\s*:\s*(.+)$/i);
     if (htM) { obj.halfTimeScore = parseScore(htM[1].trim()); continue; }
@@ -2743,7 +2755,7 @@ function parsePProviderTF(lines, obj) {
       else obj.pick = pickStr;
       continue;
     }
-    const oddsM = l.match(/^Odds\s*:\s*([\d.]+)$/i);
+    const oddsM = l.match(/^Odds\s*:\s*([+-]?\d+(?:\.\d+)?)$/i);
     if (oddsM) { obj.odds = parseFloat(oddsM[1]); continue; }
     const halfM = l.match(/^Half\s*:\s*(.+)$/i);
     if (halfM) { obj.halfTimeScore = parseScore(halfM[1].trim()); continue; }
@@ -2763,7 +2775,7 @@ function parsePProviderTF(lines, obj) {
 // =============================================
 function parseBetString(bet, obj) {
   // Odds: @X.XX
-  const oddsM = bet.match(/@([\d.]+)/);
+  const oddsM = bet.match(/@([+-]?\d+(?:\.\d+)?)/);
   if (oddsM) obj.odds = parseFloat(oddsM[1]);
   const betNoOdds = bet.replace(/@[\d.]+/, '').trim();
 
@@ -2784,6 +2796,21 @@ function parseBetString(bet, obj) {
     obj.market = 'HTOU';
     obj.pick = /^O(?:ver)?$/i.test(pHTOU[1]) ? 'Over' : 'Under';
     obj.line = parseFloat(pHTOU[2]);
+    return;
+  }
+
+
+  // Total Goal range: Total Goal 4-6 0 @2.01
+  // Artinya menang jika total gol FT masuk dalam rentang 4 sampai 6.
+  const pTGRange = betNoOdds.match(/^Total\s*Goal\s+(\d+)\s*[-–]\s*(\d+)(?:\s+0)?\s*$/i);
+  if (pTGRange) {
+    const minGoal = parseInt(pTGRange[1], 10);
+    const maxGoal = parseInt(pTGRange[2], 10);
+    obj.market = 'TOTALGOAL';
+    obj.pick = `${minGoal}-${maxGoal}`;
+    obj.line = `${minGoal}-${maxGoal}`;
+    obj.rangeMin = minGoal;
+    obj.rangeMax = maxGoal;
     return;
   }
 
@@ -2849,9 +2876,18 @@ function parseBetString(bet, obj) {
   const pBTTS = betNoOdds.match(/(?:BTTS|Both\s*Teams?\s*(?:To\s*)?Score)\s+(Yes|No)/i);
   if (pBTTS) { obj.market = 'BTTS'; obj.pick = pBTTS[1]; return; }
 
-  // Odd/Even
-  const pOE = betNoOdds.match(/^(Odd|Even)\s*$/i);
-  if (pOE) { obj.market = 'ODDEVEN'; obj.pick = pOE[1]; return; }
+  // Odd/Even / Genap Ganjil
+  // Contoh valid:
+  // - Odd/Even Odd 0 @-1.13
+  // - Odd/Even Even 0
+  // - Odd 0 / Even 0
+  // - Ganjil 0 / Genap 0
+  const pOE = betNoOdds.match(/^(?:(?:Odd\s*\/\s*Even|OddEven|Genap\s*\/\s*Ganjil|Ganjil\s*\/\s*Genap)\s+)?(Odd|Even|Ganjil|Genap)(?:\s+0)?\s*$/i);
+  if (pOE) {
+    obj.market = 'ODDEVEN';
+    obj.pick = /odd|ganjil/i.test(pOE[1]) ? 'Odd' : 'Even';
+    return;
+  }
 
   // Fallback: whole bet string
   obj.market = betNoOdds;
@@ -2861,6 +2897,7 @@ function parseBetString(bet, obj) {
 
 function normalizeMarket(m) {
   if (/1x2/i.test(m)) return '1X2';
+  if (/total\s*goal/i.test(m)) return 'TOTALGOAL';
   if (/over.under|o\/u/i.test(m)) return 'OU';
   if (/handicap|hdp|asian/i.test(m)) return 'HDP';
   if (/half.time.1x2/i.test(m)) return 'HT1X2';
@@ -2896,9 +2933,9 @@ function checkBet(obj) {
     r.reason = 'Data tidak lengkap: market taruhan tidak terbaca.';
     return finalizeBetMoney(r);
   }
-  if (!obj.odds) {
+  if (obj.odds === null || obj.odds === undefined || !Number.isFinite(Number(obj.odds)) || Number(obj.odds) === 0) {
     r.status = 'INVALID DATA';
-    r.reason = 'Data tidak lengkap: odds tidak ditemukan.';
+    r.reason = 'Data tidak lengkap: odds tidak ditemukan / tidak valid.';
     return finalizeBetMoney(r);
   }
 
@@ -2923,6 +2960,7 @@ function checkBet(obj) {
     case '1X2': checked = check1X2(r); break;
     case 'HDP': checked = checkHandicap(r); break;
     case 'OU': checked = checkOU(r); break;
+    case 'TOTALGOAL': checked = checkTotalGoal(r); break;
     case 'HT1X2': checked = checkHT1X2(r); break;
     case 'HTOU': checked = checkHTOU(r); break;
     case 'CS': checked = checkCS(r); break;
@@ -3175,6 +3213,37 @@ function checkBTTS(r) {
   return r;
 }
 
+
+function checkTotalGoal(r) {
+  const ft = r.fullTimeScore;
+  const total = ft.home + ft.away;
+  let minGoal = Number(r.rangeMin);
+  let maxGoal = Number(r.rangeMax);
+
+  if ((!Number.isFinite(minGoal) || !Number.isFinite(maxGoal)) && r.line) {
+    const m = String(r.line).match(/^(\d+)\s*[-–]\s*(\d+)$/);
+    if (m) {
+      minGoal = Number(m[1]);
+      maxGoal = Number(m[2]);
+    }
+  }
+
+  if (!Number.isFinite(minGoal) || !Number.isFinite(maxGoal)) {
+    r.status = 'INVALID DATA';
+    r.reason = `Range Total Goal tidak valid: ${r.line || r.pick || '-'}.`;
+    r.details = [['Market','Total Goal'],['Pick',r.pick || '-'],['FT Score',ft.home+':'+ft.away],['Total Goal',total],['Hasil',r.status]];
+    return r;
+  }
+
+  const low = Math.min(minGoal, maxGoal);
+  const high = Math.max(minGoal, maxGoal);
+  const win = total >= low && total <= high;
+  r.status = win ? 'WIN' : 'LOSE';
+  r.reason = `Total Goal pilih ${low}-${high}. Skor FT ${ft.home}:${ft.away}, total gol ${total}. ${win ? `Total gol masuk range ${low}-${high} → WIN.` : `Total gol di luar range ${low}-${high} → LOSE.`}`;
+  r.details = [['Market','Total Goal'],['Pick',low+'-'+high],['FT Score',ft.home+':'+ft.away],['Total Goal',total],['Range Menang',low+'-'+high],['Hasil',r.status]];
+  return r;
+}
+
 function checkOddEven(r) {
   const ft = r.fullTimeScore;
   const total = ft.home + ft.away;
@@ -3331,8 +3400,17 @@ function buildBetExplanationForMember(r) {
     return `Pilihan BTTS ${r.pick}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
   }
 
+  if (market === 'TOTALGOAL') {
+    const ft = r.fullTimeScore;
+    const total = ft ? ft.home + ft.away : '-';
+    return `Pilihan Total Goal ${r.pick || r.line}. Skor FT ${scoreText(ft)}, total gol ${total}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
   if (market === 'ODDEVEN') {
-    return `Pilihan Odd/Even ${r.pick}. Skor FT ${scoreText(r.fullTimeScore)}. Maka hasil taruhan menjadi ${statusText}.`;
+    const ft = r.fullTimeScore;
+    const total = ft ? ft.home + ft.away : '-';
+    const ganjilGenap = ft ? ((ft.home + ft.away) % 2 !== 0 ? 'Ganjil / Odd' : 'Genap / Even') : '-';
+    return `Pilihan Odd/Even ${r.pick}. Skor FT ${scoreText(ft)}, total gol ${total} (${ganjilGenap}). Maka hasil taruhan menjadi ${statusText}.`;
   }
 
   return cleanReasonForMember(r.reason);
@@ -3429,17 +3507,18 @@ function copyMemberReply(idx) {
 // =============================================
 function getEffectiveParlayLeg(r) {
   const odds = Number(r.odds || 0);
+  const oddsMultiplier = getOddsPayoutMultiplier(odds);
   const status = String(r.status || '').toUpperCase();
 
-  if (!Number.isFinite(odds) || odds <= 0) {
+  if (!Number.isFinite(odds) || !oddsMultiplier) {
     return { valid: false, factor: null, label: 'Odds tidak valid', paymentText: '-', rawOdds: odds };
   }
 
   if (status === 'WIN') {
-    return { valid: true, factor: odds, label: 'Menang Full', paymentText: formatOdds(odds), rawOdds: odds };
+    return { valid: true, factor: oddsMultiplier, label: 'Menang Full', paymentText: formatOdds(oddsMultiplier), rawOdds: odds };
   }
   if (status === 'HALF WIN') {
-    const factor = ((odds - 1) / 2) + 1;
+    const factor = ((oddsMultiplier - 1) / 2) + 1;
     return { valid: true, factor, label: 'Menang Setengah', paymentText: formatOdds(factor), rawOdds: odds };
   }
   if (status === 'HALF LOSE') {
