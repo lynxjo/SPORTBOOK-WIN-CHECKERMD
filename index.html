@@ -1,0 +1,3423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPORTBOOK WIN CHECKER — MANCINGDUIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ========== CSS VARIABLES ========== */
+:root {
+  --bg-void: #010208;
+  --bg-deep: #040912;
+  --bg-panel: #080f1e;
+  --bg-card: #0a1020;
+  --bg-input: #060d1a;
+  --bg-hover: #0f1a30;
+
+  --cyan: #00f5ff;
+  --cyan-dim: #00b8c4;
+  --cyan-glow: rgba(0,245,255,0.15);
+  --green-neon: #00ff88;
+  --green-dim: #00c466;
+  --green-glow: rgba(0,255,136,0.15);
+  --purple: #b44dff;
+  --purple-dim: #7a2dcc;
+  --purple-glow: rgba(180,77,255,0.15);
+  --pink: #ff2d8a;
+  --pink-dim: #c0195e;
+  --pink-glow: rgba(255,45,138,0.15);
+  --yellow: #ffe033;
+  --yellow-dim: #c4a800;
+  --yellow-glow: rgba(255,224,51,0.15);
+  --red-neon: #ff3d5a;
+  --red-glow: rgba(255,61,90,0.15);
+  --blue-mid: #1a3a6e;
+
+  --text-bright: #e8f4ff;
+  --text-mid: #8aa4cc;
+  --text-dim: #3d5577;
+  --text-mono: #6ec6e0;
+
+  --border-subtle: rgba(0,245,255,0.08);
+  --border-mid: rgba(0,245,255,0.18);
+  --border-glow: rgba(0,245,255,0.45);
+
+  --sidebar-w: 230px;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--bg-void);
+  color: var(--text-bright);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0,60,120,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(80,0,160,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(0,40,80,0.2) 0%, transparent 70%);
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
+
+/* ========== LAYOUT ========== */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: linear-gradient(180deg, #070e1f 0%, #050b17 100%);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
+  animation: borderPulse 3s ease-in-out infinite;
+}
+
+@keyframes borderPulse {
+  0%,100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.sidebar-brand {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 20px rgba(0,245,255,0.4);
+  animation: iconPulse 4s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%,100% { box-shadow: 0 0 16px rgba(0,245,255,0.4); }
+  50% { box-shadow: 0 0 30px rgba(0,245,255,0.7), 0 0 60px rgba(180,77,255,0.3); }
+}
+
+.brand-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  line-height: 1.3;
+  text-shadow: 0 0 12px rgba(0,245,255,0.6);
+}
+
+.brand-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.nav-section-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  padding: 8px 8px 4px;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--text-mid);
+  position: relative;
+  overflow: hidden;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--cyan);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.nav-item:hover {
+  background: var(--cyan-glow);
+  color: var(--cyan);
+  border-color: var(--border-subtle);
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(0,245,255,0.12), rgba(0,245,255,0.04));
+  color: var(--cyan);
+  border-color: var(--border-mid);
+}
+
+.nav-item.active::before { transform: scaleY(1); }
+
+.nav-icon {
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--cyan);
+  color: var(--bg-void);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.status-dot {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  box-shadow: 0 0 8px var(--green-neon);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== TOPBAR ========== */
+.topbar {
+  background: rgba(4,9,18,0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.topbar-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+}
+
+.topbar-title span { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+
+.topbar-meta {
+  display: flex; align-items: center; gap: 16px;
+}
+
+.time-display {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-mid);
+  background: rgba(0,245,255,0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.provider-badge {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--purple);
+  border: 1px solid var(--purple-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  background: var(--purple-glow);
+}
+
+/* ========== PAGE SECTIONS ========== */
+.page-section {
+  display: none;
+  padding: 28px;
+  flex: 1;
+}
+
+.page-section.active { display: block; }
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.section-title span { color: var(--cyan); text-shadow: 0 0 12px rgba(0,245,255,0.5); }
+
+.section-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* ========== CHECKER SECTION ========== */
+.checker-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+}
+
+.panel {
+  background: linear-gradient(135deg, #080f1e 0%, #0a1220 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan-dim), transparent);
+  opacity: 0.5;
+}
+
+.panel-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-mid), transparent);
+}
+
+.input-area {
+  width: 100%;
+  min-height: 280px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--text-mono);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  resize: vertical;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.input-area:focus {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 20px rgba(0,245,255,0.08), inset 0 0 20px rgba(0,245,255,0.03);
+}
+
+.input-area::placeholder { color: var(--text-dim); }
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--cyan), var(--cyan-dim));
+  color: var(--bg-void);
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px rgba(0,245,255,0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 35px rgba(0,245,255,0.6), 0 0 70px rgba(0,245,255,0.2);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-mid);
+  border-color: var(--border-mid);
+}
+
+.btn-secondary:hover {
+  background: rgba(138,164,204,0.08);
+  color: var(--text-bright);
+  border-color: rgba(138,164,204,0.4);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, var(--purple), var(--purple-dim));
+  color: white;
+  border-color: var(--purple);
+  box-shadow: 0 0 16px rgba(180,77,255,0.3);
+}
+
+.btn-accent:hover {
+  box-shadow: 0 0 30px rgba(180,77,255,0.6);
+  transform: translateY(-1px);
+}
+
+.btn-green {
+  background: linear-gradient(135deg, var(--green-neon), var(--green-dim));
+  color: var(--bg-void);
+  border-color: var(--green-neon);
+  box-shadow: 0 0 16px rgba(0,255,136,0.3);
+}
+
+.btn-green:hover {
+  box-shadow: 0 0 30px rgba(0,255,136,0.6);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--pink);
+  border-color: var(--pink-dim);
+}
+
+.btn-danger:hover {
+  background: var(--pink-glow);
+  box-shadow: 0 0 16px rgba(255,45,138,0.3);
+}
+
+/* File input hidden */
+#fileInput { display: none; }
+
+/* Settings panel */
+.settings-group {
+  margin-bottom: 20px;
+}
+
+.settings-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.select-styled {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: var(--text-bright);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300f5ff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.select-styled:focus {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 12px rgba(0,245,255,0.1);
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.radio-item:hover {
+  background: var(--cyan-glow);
+  border-color: var(--border-mid);
+  color: var(--cyan);
+}
+
+.radio-item input[type="radio"] { display: none; }
+
+.radio-dot {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border-mid);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.radio-item input[type="radio"]:checked + .radio-dot {
+  border-color: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,245,255,0.5);
+}
+
+.radio-item input[type="radio"]:checked + .radio-dot::after {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  display: block;
+}
+
+.radio-item.selected {
+  background: var(--cyan-glow);
+  border-color: var(--border-mid);
+  color: var(--cyan);
+}
+
+/* Quick data example */
+.example-box {
+  background: rgba(0,245,255,0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+
+.example-box:hover {
+  background: rgba(0,245,255,0.07);
+  border-color: var(--border-mid);
+  color: var(--text-mid);
+}
+
+.example-box-label {
+  font-size: 9px;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ========== RESULTS SECTION ========== */
+.results-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.results-filter {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-dim);
+  transition: all 0.2s;
+}
+
+.filter-btn:hover { color: var(--text-mid); border-color: var(--border-mid); }
+
+.filter-btn.active-all { color: var(--cyan); border-color: var(--cyan); background: var(--cyan-glow); }
+.filter-btn.active-win { color: var(--green-neon); border-color: var(--green-neon); background: var(--green-glow); }
+.filter-btn.active-lose { color: var(--pink); border-color: var(--pink); background: var(--pink-glow); }
+.filter-btn.active-refund { color: var(--yellow); border-color: var(--yellow); background: var(--yellow-glow); }
+.filter-btn.active-pending { color: var(--text-mid); border-color: var(--border-mid); background: rgba(138,164,204,0.08); }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.empty-state {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ========== RESULT CARD ========== */
+.result-card {
+  background: linear-gradient(135deg, #080f1e, #090d1c);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: cardIn 0.4s ease both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+}
+
+.card-border-win { border: 1px solid rgba(0,255,136,0.3); }
+.card-border-win:hover { box-shadow: 0 8px 40px rgba(0,255,136,0.15); }
+
+.card-border-lose { border: 1px solid rgba(255,61,90,0.3); }
+.card-border-lose:hover { box-shadow: 0 8px 40px rgba(255,61,90,0.15); }
+
+.card-border-refund { border: 1px solid rgba(255,224,51,0.3); }
+.card-border-refund:hover { box-shadow: 0 8px 40px rgba(255,224,51,0.12); }
+
+.card-border-halfwin { border: 1px solid rgba(0,245,255,0.3); }
+.card-border-halfwin:hover { box-shadow: 0 8px 40px rgba(0,245,255,0.12); }
+
+.card-border-halflose { border: 1px solid rgba(255,45,138,0.3); }
+.card-border-halflose:hover { box-shadow: 0 8px 40px rgba(255,45,138,0.12); }
+
+.card-border-pending { border: 1px solid rgba(138,164,204,0.2); }
+.card-border-pending:hover { box-shadow: 0 8px 40px rgba(138,164,204,0.08); }
+
+.card-border-invalid { border: 1px solid rgba(180,77,255,0.25); }
+
+.card-accent-win { background: linear-gradient(90deg, rgba(0,255,136,0.12), transparent); height: 3px; }
+.card-accent-lose { background: linear-gradient(90deg, rgba(255,61,90,0.12), transparent); height: 3px; }
+.card-accent-refund { background: linear-gradient(90deg, rgba(255,224,51,0.12), transparent); height: 3px; }
+.card-accent-halfwin { background: linear-gradient(90deg, rgba(0,245,255,0.12), transparent); height: 3px; }
+.card-accent-halflose { background: linear-gradient(90deg, rgba(255,45,138,0.12), transparent); height: 3px; }
+.card-accent-pending { background: linear-gradient(90deg, rgba(138,164,204,0.1), transparent); height: 3px; }
+.card-accent-invalid { background: linear-gradient(90deg, rgba(180,77,255,0.1), transparent); height: 3px; }
+
+.card-body { padding: 18px 18px 14px; }
+
+.card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-sport-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.status-chip {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+
+.status-win { color: var(--green-neon); background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.4); text-shadow: 0 0 10px rgba(0,255,136,0.5); }
+.status-lose { color: var(--red-neon); background: rgba(255,61,90,0.12); border: 1px solid rgba(255,61,90,0.4); text-shadow: 0 0 10px rgba(255,61,90,0.5); }
+.status-refund { color: var(--yellow); background: rgba(255,224,51,0.1); border: 1px solid rgba(255,224,51,0.4); }
+.status-halfwin { color: var(--cyan); background: rgba(0,245,255,0.1); border: 1px solid rgba(0,245,255,0.4); }
+.status-halflose { color: var(--pink); background: rgba(255,45,138,0.1); border: 1px solid rgba(255,45,138,0.35); }
+.status-pending { color: var(--text-mid); background: rgba(138,164,204,0.08); border: 1px solid rgba(138,164,204,0.2); }
+.status-void { color: var(--yellow); background: rgba(255,224,51,0.08); border: 1px solid rgba(255,224,51,0.3); }
+.status-invalid { color: var(--purple); background: rgba(180,77,255,0.1); border: 1px solid rgba(180,77,255,0.3); }
+
+.card-matchup {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.card-league {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+.card-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.info-cell {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+.info-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.score-display {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.score-part {
+  text-align: center;
+}
+
+.score-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.score-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-bright);
+  line-height: 1;
+}
+
+.score-divider {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  color: var(--text-dim);
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+.analysis-box {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--cyan-dim);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.analysis-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.analysis-text {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+
+.analysis-detail {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+  display: none;
+}
+
+.analysis-detail.show { display: block; }
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  padding: 2px 0;
+}
+
+.detail-row span:last-child { color: var(--text-mono); }
+
+.card-footer {
+  padding: 10px 18px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.provider-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--purple);
+  letter-spacing: 1.5px;
+}
+
+.detail-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--cyan-dim);
+  cursor: pointer;
+  letter-spacing: 1px;
+  background: none;
+  border: none;
+  transition: color 0.2s;
+}
+
+.detail-toggle:hover { color: var(--cyan); }
+
+/* Odds chip */
+.odds-chip {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--yellow);
+  background: rgba(255,224,51,0.08);
+  border: 1px solid rgba(255,224,51,0.25);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+/* Betting amount / payout chip */
+.money-chip {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green-neon);
+  background: rgba(0,255,136,0.08);
+  border: 1px solid rgba(0,255,136,0.25);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.profit-positive { color: var(--green-neon); }
+.profit-negative { color: var(--red-neon); }
+.profit-neutral { color: var(--yellow); }
+
+.input-styled {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: var(--text-bright);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input-styled:focus {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 12px rgba(0,245,255,0.1);
+}
+
+
+
+/* ========== MIX PARLAY CALCULATOR ========== */
+.mix-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.mix-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.mix-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mix-summary-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.mix-summary-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.mix-summary-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--cyan);
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+.mix-summary-value.profit-positive { color: var(--green-neon); }
+.mix-summary-value.profit-negative { color: var(--red-neon); }
+.mix-summary-value.profit-neutral { color: var(--yellow); }
+
+.parlay-leg-card {
+  background: linear-gradient(135deg, rgba(0,245,255,0.045), rgba(180,77,255,0.035));
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  animation: cardIn 0.25s ease both;
+}
+
+.parlay-leg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.parlay-leg-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 1px;
+}
+
+.parlay-leg-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 150px;
+  gap: 14px;
+  align-items: start;
+}
+
+.parlay-option-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.parlay-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-mid);
+  transition: all 0.2s;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.parlay-option:hover {
+  border-color: var(--border-mid);
+  background: var(--cyan-glow);
+  color: var(--cyan);
+}
+
+.parlay-option input[type="radio"] { display: none; }
+
+.parlay-option input[type="radio"]:checked + .radio-dot {
+  border-color: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,245,255,0.5);
+}
+
+.parlay-option input[type="radio"]:checked + .radio-dot::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  display: block;
+}
+
+.parlay-option.active {
+  background: var(--cyan-glow);
+  border-color: var(--border-mid);
+  color: var(--cyan);
+}
+
+.parlay-odds-result {
+  background: rgba(0,0,0,0.22);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+
+.parlay-odds-result .label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.parlay-odds-result .value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--yellow);
+}
+
+.parlay-note-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.parlay-note-box {
+  background: rgba(0,0,0,0.18);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 14px;
+  color: var(--text-mid);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.parlay-note-box strong { color: var(--text-bright); }
+
+.parlay-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.parlay-detail-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.parlay-detail-item span:last-child {
+  color: var(--text-mono);
+  text-align: right;
+}
+
+@media (max-width: 1100px) {
+  .mix-layout { grid-template-columns: 1fr; }
+  .parlay-leg-grid { grid-template-columns: 1fr; }
+  .parlay-note-grid { grid-template-columns: 1fr; }
+}
+
+
+
+/* ========== MIX PARLAY CLASSIC LAYOUT FIX ========== */
+.mix-classic-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.mix-classic-top {
+  display: grid;
+  grid-template-columns: 190px 190px 190px;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+
+.mix-classic-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mix-mini-result {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.mix-mini-box {
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255,255,255,0.035);
+}
+
+.mix-mini-box.blue { background: rgba(0,245,255,0.13); border-color: rgba(0,245,255,0.28); }
+.mix-mini-box.orange { background: rgba(255,224,51,0.12); border-color: rgba(255,224,51,0.28); }
+
+.mix-mini-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.mix-mini-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-bright);
+}
+
+.parlay-leg-card.classic {
+  display: grid;
+  grid-template-columns: 190px 180px minmax(280px, 1fr);
+  gap: 16px;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 12px 0 22px;
+  margin: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.parlay-leg-actions {
+  display: flex;
+  align-items: center;
+}
+
+.parlay-leg-field label,
+.parlay-leg-result-title {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-bright);
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.parlay-option-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.parlay-option-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-mid);
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.parlay-option-line input { accent-color: var(--cyan); }
+
+.parlay-option-line.active,
+.parlay-option-line:hover { color: var(--cyan); }
+
+.parlay-leg-result-odds {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-mid);
+}
+
+.parlay-leg-result-odds strong {
+  color: var(--yellow);
+  font-family: 'Orbitron', sans-serif;
+}
+
+@media (max-width: 1200px) {
+  .mix-classic-layout { grid-template-columns: 1fr; }
+  .mix-classic-top { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .mix-classic-top,
+  .parlay-leg-card.classic { grid-template-columns: 1fr; }
+}
+
+/* ========== STATISTICS SECTION ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #080f1e, #0a1220);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-mid);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.stat-win::before { background: linear-gradient(90deg, transparent, var(--green-neon), transparent); }
+.stat-lose::before { background: linear-gradient(90deg, transparent, var(--red-neon), transparent); }
+.stat-refund::before { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
+.stat-total::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+.stat-rate::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+.stat-odds::before { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
+.stat-payout::before { background: linear-gradient(90deg, transparent, var(--green-neon), transparent); }
+.stat-pending::before { background: linear-gradient(90deg, transparent, var(--text-mid), transparent); }
+
+.stat-icon { font-size: 22px; margin-bottom: 8px; }
+
+.stat-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.val-win { color: var(--green-neon); text-shadow: 0 0 15px rgba(0,255,136,0.5); }
+.val-lose { color: var(--red-neon); text-shadow: 0 0 15px rgba(255,61,90,0.5); }
+.val-refund { color: var(--yellow); }
+.val-total { color: var(--cyan); text-shadow: 0 0 15px rgba(0,245,255,0.5); }
+.val-rate { color: var(--purple); text-shadow: 0 0 15px rgba(180,77,255,0.5); }
+.val-odds { color: var(--yellow); }
+.val-payout { color: var(--green-neon); }
+.val-pending { color: var(--text-mid); }
+
+/* Win rate bar */
+.winrate-bar-wrap {
+  background: linear-gradient(135deg, #080f1e, #0a1220);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.winrate-bar-wrap .panel-title { margin-bottom: 12px; }
+
+.bar-track {
+  height: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.bar-seg-win {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-neon), var(--green-dim));
+  transition: width 0.8s ease;
+  box-shadow: 0 0 10px rgba(0,255,136,0.4);
+}
+
+.bar-seg-lose {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red-neon), var(--pink));
+  transition: width 0.8s ease;
+}
+
+.bar-seg-other {
+  height: 100%;
+  background: linear-gradient(90deg, var(--yellow), var(--yellow-dim));
+  transition: width 0.8s ease;
+}
+
+.bar-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-mid);
+}
+
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 2px;
+}
+
+/* ========== SETTINGS SECTION ========== */
+.settings-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* ========== TOAST / NOTIFY ========== */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.3s ease both;
+  max-width: 320px;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast-success { border: 1px solid var(--green-neon); color: var(--green-neon); }
+.toast-error { border: 1px solid var(--pink); color: var(--pink); }
+.toast-info { border: 1px solid var(--cyan); color: var(--cyan); }
+
+/* ========== SCANNING OVERLAY ========== */
+.scanning-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(1,2,8,0.85);
+  backdrop-filter: blur(10px);
+  align-items: center;
+  justify-content: center;
+}
+
+.scanning-overlay.show { display: flex; }
+
+.scanning-box {
+  text-align: center;
+  padding: 40px;
+}
+
+.scan-spinner {
+  width: 64px; height: 64px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--cyan);
+  border-right-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 30px rgba(0,245,255,0.3);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.scan-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--cyan);
+}
+
+.scan-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+/* ========== GLOW PULSE animations ========== */
+@keyframes glowPulse {
+  0%,100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+/* Progress line at top */
+.progress-line {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+  z-index: 200;
+  animation: progressPulse 4s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0% { width: 20%; opacity: 0.6; }
+  50% { width: 80%; opacity: 1; }
+  100% { width: 20%; opacity: 0.6; }
+}
+
+/* Scrollable container */
+.scroll-area {
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Market badge */
+.market-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--cyan-dim);
+  background: rgba(0,245,255,0.06);
+  border: 1px solid rgba(0,245,255,0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-line"></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Scanning Overlay -->
+<div class="scanning-overlay" id="scanOverlay">
+  <div class="scanning-box">
+    <div class="scan-spinner"></div>
+    <div class="scan-text">ANALYZING BETS</div>
+    <div class="scan-sub" id="scanProgress">Processing data...</div>
+  </div>
+</div>
+
+<div class="app-shell">
+  <!-- ======== SIDEBAR ======== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-title">SPORTBOOK WIN<br>CHECKER</div>
+      <div class="brand-sub">✦ MANCINGDUIT ✦</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">MENU</div>
+
+      <button class="nav-item active" onclick="switchPage('checker')">
+        <span class="nav-icon">🔍</span>
+        Checker
+      </button>
+
+      <button class="nav-item" onclick="switchPage('result')">
+        <span class="nav-icon">📊</span>
+        Result
+        <span class="nav-badge" id="resultBadge">0</span>
+      </button>
+
+      <button class="nav-item" onclick="switchPage('analysis')">
+        <span class="nav-icon">🧠</span>
+        Analysis Detail
+      </button>
+
+      <button class="nav-item" onclick="switchPage('statistics')">
+        <span class="nav-icon">📈</span>
+        Statistics
+      </button>
+
+      <button class="nav-item" onclick="switchPage('mixparlay')">
+        <span class="nav-icon">🧮</span>
+        Calculator Mix Parlay
+      </button>
+
+      <div class="nav-section-label" style="margin-top:8px">CONFIG</div>
+
+      <button class="nav-item" onclick="switchPage('settings')">
+        <span class="nav-icon">⚙️</span>
+        Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-dot">
+        <div class="dot"></div>
+        SYSTEM ONLINE
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======== MAIN CONTENT ======== -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title">SPORTBOOK WIN CHECKER <span>DASHBOARD</span></div>
+      <div class="topbar-meta">
+        <div class="time-display" id="clockDisplay">--:--:--</div>
+        <div class="provider-badge" id="activeProv">AUTO DETECT</div>
+      </div>
+    </div>
+
+    <!-- ======== CHECKER ======== -->
+    <div class="page-section active" id="page-checker">
+      <div class="section-header">
+        <div class="section-title">🔍 BET <span>CHECKER</span></div>
+        <div class="section-sub">Paste, input, atau import data taruhan sportsbook untuk dicek otomatis</div>
+      </div>
+
+      <div class="checker-grid">
+        <!-- Left: Input -->
+        <div class="panel">
+          <div class="panel-title">📋 INPUT DATA TIKET</div>
+          <textarea class="input-area" id="betInput" placeholder="Paste data taruhan sportsbook di sini...
+
+Contoh Format SBO:
+Football
+e-Liverpool vs e-Manchester City
+e-Football F24 Elite Club Friendly
+2026-05-22T04:30:00.000
+Stake: Rp 100.000
+Type: Europe
+Bet: 1X2 1 0 @2.56
+Half time result: 3:2
+Full time result: 4:3
+
+Bisa paste banyak tiket sekaligus — pisahkan dengan baris kosong atau ---"></textarea>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="runChecker()">⚡ CHECK NOW</button>
+            <button class="btn btn-secondary" onclick="clearInput()">🗑 CLEAR</button>
+            <button class="btn btn-accent" onclick="document.getElementById('fileInput').click()">📁 IMPORT FILE</button>
+            <button class="btn btn-green" onclick="loadExample()">💡 EXAMPLE</button>
+            <input type="file" id="fileInput" accept=".txt,.csv,.xlsx,.xls" onchange="importFile(event)">
+          </div>
+
+          <div class="example-box" onclick="loadExample()" title="Klik untuk load contoh data">
+            <div class="example-box-label">⚡ QUICK LOAD — CONTOH DATA TESTING</div>
+            Football · e-Liverpool vs e-Manchester City<br>
+            Bet: 1X2 1 @2.56 · FT: 4:3 → Expected: <span style="color:var(--green-neon)">WIN</span>
+          </div>
+        </div>
+
+        <!-- Right: Settings -->
+        <div class="panel">
+          <div class="panel-title">⚙️ KONFIGURASI</div>
+
+          <div class="settings-group">
+            <label class="settings-label">FORMAT PROVIDER</label>
+            <select class="select-styled" id="providerSelect" onchange="updateProviderBadge()">
+              <option value="auto">🤖 Auto Detect</option>
+              <option value="sbo">SBO Sportsbook</option>
+              <option value="ap">AP Sportsbook</option>
+              <option value="tf">TF Gaming</option>
+            </select>
+          </div>
+
+          <div class="settings-group">
+            <label class="settings-label">JUMLAH BETTINGAN DEFAULT</label>
+            <input class="input-styled" id="defaultStakeInput" type="text" value="100000" placeholder="Contoh: 100000 / Rp 100.000">
+            <p style="font-size:11px;color:var(--text-dim);line-height:1.5;margin-top:6px">
+              Dipakai otomatis jika tiket tidak punya baris <span style="color:var(--cyan)">Stake:</span> atau <span style="color:var(--cyan)">Bet Amount:</span>.
+            </p>
+          </div>
+
+          <div class="settings-group">
+            <label class="settings-label">MODE ANALISA</label>
+            <div class="radio-group">
+              <label class="radio-item selected" id="modeFulltime">
+                <input type="radio" name="analysisMode" value="fulltime" checked onchange="updateMode(this)">
+                <span class="radio-dot"></span>
+                ⏱ Full Time
+              </label>
+              <label class="radio-item" id="modeHalftime">
+                <input type="radio" name="analysisMode" value="halftime" onchange="updateMode(this)">
+                <span class="radio-dot"></span>
+                ⚽ Half Time
+              </label>
+              <label class="radio-item" id="modeLive">
+                <input type="radio" name="analysisMode" value="live" onchange="updateMode(this)">
+                <span class="radio-dot"></span>
+                🔴 Live Bet
+              </label>
+              <label class="radio-item" id="modeAuto">
+                <input type="radio" name="analysisMode" value="auto" onchange="updateMode(this)">
+                <span class="radio-dot"></span>
+                🤖 Mix Auto Detect
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-group" style="margin-top:auto">
+            <label class="settings-label">EXPORT RESULTS</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-secondary" style="flex:1" onclick="exportCSV()">📥 CSV</button>
+              <button class="btn btn-secondary" style="flex:1" onclick="exportJSON()">📥 JSON</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== RESULT ======== -->
+    <div class="page-section" id="page-result">
+      <div class="section-header">
+        <div class="section-title">📊 HASIL <span>PENGECEKAN</span></div>
+        <div class="section-sub">Semua tiket yang sudah dicek akan tampil di sini</div>
+      </div>
+
+      <div class="results-toolbar">
+        <div class="results-filter">
+          <button class="filter-btn active-all" onclick="filterResults('all', this)">ALL</button>
+          <button class="filter-btn" onclick="filterResults('WIN', this)">WIN</button>
+          <button class="filter-btn" onclick="filterResults('LOSE', this)">LOSE</button>
+          <button class="filter-btn" onclick="filterResults('HALF WIN', this)">HALF WIN</button>
+          <button class="filter-btn" onclick="filterResults('HALF LOSE', this)">HALF LOSE</button>
+          <button class="filter-btn" onclick="filterResults('REFUND', this)">REFUND</button>
+          <button class="filter-btn" onclick="filterResults('PENDING', this)">PENDING</button>
+          <button class="filter-btn" onclick="filterResults('INVALID', this)">INVALID</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" style="font-size:9px;padding:6px 14px" onclick="exportCSV()">📥 CSV</button>
+          <button class="btn btn-secondary" style="font-size:9px;padding:6px 14px" onclick="exportJSON()">📥 JSON</button>
+          <button class="btn btn-danger" style="font-size:9px;padding:6px 14px" onclick="clearResults()">🗑 CLEAR</button>
+        </div>
+      </div>
+
+      <div class="results-grid" id="resultsGrid">
+        <div class="empty-state">
+          <div class="empty-icon">🎯</div>
+          <div class="empty-text">BELUM ADA DATA HASIL<br>Pergi ke Checker dan input data taruhan</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== ANALYSIS DETAIL ======== -->
+    <div class="page-section" id="page-analysis">
+      <div class="section-header">
+        <div class="section-title">🧠 ANALYSIS <span>DETAIL</span></div>
+        <div class="section-sub">Breakdown lengkap setiap tiket beserta logika perhitungan</div>
+      </div>
+      <div id="analysisContainer">
+        <div class="empty-state">
+          <div class="empty-icon">🔬</div>
+          <div class="empty-text">BELUM ADA DATA ANALISIS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== STATISTICS ======== -->
+    <div class="page-section" id="page-statistics">
+      <div class="section-header">
+        <div class="section-title">📈 <span>STATISTICS</span></div>
+        <div class="section-sub">Ringkasan performa taruhan secara keseluruhan</div>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card stat-total">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-val val-total" id="statTotal">0</div>
+          <div class="stat-label">Total Tiket</div>
+        </div>
+        <div class="stat-card stat-win">
+          <div class="stat-icon">✅</div>
+          <div class="stat-val val-win" id="statWin">0</div>
+          <div class="stat-label">Total WIN</div>
+        </div>
+        <div class="stat-card stat-lose">
+          <div class="stat-icon">❌</div>
+          <div class="stat-val val-lose" id="statLose">0</div>
+          <div class="stat-label">Total LOSE</div>
+        </div>
+        <div class="stat-card stat-refund">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-val val-refund" id="statRefund">0</div>
+          <div class="stat-label">Refund/Draw</div>
+        </div>
+        <div class="stat-card stat-pending">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-val val-pending" id="statPending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card stat-rate">
+          <div class="stat-icon">📊</div>
+          <div class="stat-val val-rate" id="statRate">0%</div>
+          <div class="stat-label">Win Rate</div>
+        </div>
+        <div class="stat-card stat-odds">
+          <div class="stat-icon">💰</div>
+          <div class="stat-val val-odds" id="statAvgOdds">-</div>
+          <div class="stat-label">Avg Odds</div>
+        </div>
+        <div class="stat-card stat-odds">
+          <div class="stat-icon">🎟️</div>
+          <div class="stat-val val-odds" id="statStake">-</div>
+          <div class="stat-label">Total Bettingan</div>
+        </div>
+        <div class="stat-card stat-payout">
+          <div class="stat-icon">💵</div>
+          <div class="stat-val val-payout" id="statPayout">-</div>
+          <div class="stat-label">Total Payout</div>
+        </div>
+        <div class="stat-card stat-rate">
+          <div class="stat-icon">📌</div>
+          <div class="stat-val val-rate" id="statProfit">-</div>
+          <div class="stat-label">Profit / Loss</div>
+        </div>
+      </div>
+
+      <div class="winrate-bar-wrap">
+        <div class="panel-title">📉 DISTRIBUSI HASIL</div>
+        <div class="bar-track">
+          <div class="bar-seg-win" id="barWin" style="width:0%"></div>
+          <div class="bar-seg-lose" id="barLose" style="width:0%"></div>
+          <div class="bar-seg-other" id="barOther" style="width:0%"></div>
+        </div>
+        <div class="bar-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green-neon)"></div> WIN</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--red-neon)"></div> LOSE</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> OTHER</div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- ======== MIX PARLAY CALCULATOR ======== -->
+    <div class="page-section" id="page-mixparlay">
+      <div class="section-header">
+        <div class="section-title">🧮 CALCULATOR <span>MIX PARLAY</span></div>
+        <div class="section-sub">Model kalkulator dibuat seperti contoh: tambah partai, input nilai bet, pilih hasil partai, lalu sistem hitung otomatis</div>
+      </div>
+
+      <div class="mix-classic-layout">
+        <div class="panel">
+          <div class="panel-title">🎯 DATA PARTAI PARLAY</div>
+
+          <div class="mix-classic-top">
+            <div class="mix-classic-actions">
+              <button class="btn btn-green" onclick="addParlayLeg()">➕ TAMBAH +</button>
+              <button class="btn btn-secondary" onclick="resetParlay()">↺ RESET 3 PARTAI</button>
+            </div>
+
+            <div>
+              <label class="settings-label">NILAI BET</label>
+              <input class="input-styled" id="parlayBetInput" type="text" value="1000" placeholder="Contoh: 1000 / Rp 100.000" oninput="calculateParlay()">
+            </div>
+
+            <div class="mix-mini-result">
+              <div class="mix-mini-box blue">
+                <div class="mix-mini-label">HASIL ODDS</div>
+                <div class="mix-mini-value" id="parlayTopOdds">3.375</div>
+              </div>
+              <div class="mix-mini-box orange">
+                <div class="mix-mini-label">HASIL AKHIR</div>
+                <div class="mix-mini-value" id="parlayTopFinal">Rp 2.375</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="parlayLegsContainer"></div>
+
+          <div class="parlay-note-grid">
+            <div class="parlay-note-box">
+              <strong>Catatan:</strong><br>
+              Jika menang full, hitungan menjadi sama dengan odds.<br>
+              Jika menang setengah, hitungan menjadi (Odds - 1) / 2 + 1.<br>
+              Jika kalah setengah, hitungan menjadi 0.5.<br>
+              Jika seri, hitungan menjadi 1 atau tidak mengubah perkalian.
+            </div>
+            <div class="parlay-note-box">
+              <strong>Rumus Mix Parlay:</strong><br>
+              Hasil Odds = perkalian semua hasil odds partai.<br>
+              Total Return = Hasil Odds × Nilai Bet.<br>
+              Hasil Akhir = Total Return - Nilai Bet.<br>
+              Jika hasil minus, berarti kalah sejumlah angka tersebut. Jika plus, berarti menang sejumlah angka tersebut.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">💰 HASIL KALKULASI</div>
+          <div class="settings-group">
+            <label class="settings-label">NILAI BET</label>
+            <div class="input-styled" id="parlayBetMirror" style="min-height:37px">Rp 1.000</div>
+          </div>
+
+          <div class="mix-summary-grid">
+            <div class="mix-summary-card">
+              <div class="mix-summary-label">Total Partai</div>
+              <div class="mix-summary-value" id="parlayTotalLegs">3</div>
+            </div>
+            <div class="mix-summary-card">
+              <div class="mix-summary-label">Hasil Odds</div>
+              <div class="mix-summary-value" id="parlayTotalOdds">3.375</div>
+            </div>
+            <div class="mix-summary-card">
+              <div class="mix-summary-label">Total Return</div>
+              <div class="mix-summary-value" id="parlayTotalReturn">Rp 3.375</div>
+            </div>
+            <div class="mix-summary-card">
+              <div class="mix-summary-label">Hasil Akhir</div>
+              <div class="mix-summary-value profit-positive" id="parlayFinalResult">Rp 2.375</div>
+            </div>
+          </div>
+
+          <div class="analysis-box">
+            <div class="analysis-title">🔬 DETAIL HITUNGAN</div>
+            <div class="analysis-text" id="parlaySummaryText">-</div>
+            <div class="parlay-detail-list" id="parlayFormulaBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== SETTINGS ======== -->
+    <div class="page-section" id="page-settings">
+      <div class="section-header">
+        <div class="section-title">⚙️ <span>SETTINGS</span></div>
+        <div class="section-sub">Konfigurasi provider, mode analisa, dan tampilan dashboard</div>
+      </div>
+
+      <div class="settings-layout">
+        <div class="panel">
+          <div class="panel-title">🏢 PROVIDER FORMAT</div>
+          <div class="settings-group">
+            <label class="settings-label">Pilih Provider Sportsbook</label>
+            <select class="select-styled" id="providerSelect2" onchange="syncProvider(this)">
+              <option value="auto">🤖 Auto Detect (Disarankan)</option>
+              <option value="sbo">SBO Sportsbook</option>
+              <option value="ap">AP Sportsbook</option>
+              <option value="tf">TF Gaming</option>
+            </select>
+          </div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:8px">
+            Auto Detect akan mencoba mengenali format data secara otomatis dari SBO, AP, maupun TF Gaming. Pilih manual jika data dari satu sumber tertentu.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">⏱ MODE ANALISA</div>
+          <div class="settings-group">
+            <div class="radio-group">
+              <label class="radio-item selected" id="sMode1">
+                <input type="radio" name="analysisModeS" value="fulltime" checked onchange="updateModeS(this)">
+                <span class="radio-dot"></span>
+                ⏱ Full Time — Gunakan skor akhir
+              </label>
+              <label class="radio-item" id="sMode2">
+                <input type="radio" name="analysisModeS" value="halftime" onchange="updateModeS(this)">
+                <span class="radio-dot"></span>
+                ⚽ Half Time — Gunakan skor babak pertama
+              </label>
+              <label class="radio-item" id="sMode3">
+                <input type="radio" name="analysisModeS" value="live" onchange="updateModeS(this)">
+                <span class="radio-dot"></span>
+                🔴 Live Bet — Taruhan saat pertandingan berjalan
+              </label>
+              <label class="radio-item" id="sMode4">
+                <input type="radio" name="analysisModeS" value="auto" onchange="updateModeS(this)">
+                <span class="radio-dot"></span>
+                🤖 Mix Auto Detect — Otomatis sesuai market
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">ℹ️ ABOUT SYSTEM</div>
+          <p style="font-size:13px;color:var(--text-mid);line-height:1.8">
+            <span style="color:var(--cyan)">SPORTBOOK WIN CHECKER</span> v2.0<br>
+            by <span style="color:var(--green-neon)">MANCINGDUIT</span><br><br>
+            Mendukung market:<br>
+            1X2 · Handicap · Over/Under · HT 1X2<br>
+            HT O/U · Correct Score · Double Chance<br>
+            Draw No Bet · BTTS · Odd/Even<br><br>
+            Provider: SBO · AP · TF Gaming
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+//  GLOBAL STATE
+// =============================================
+let results = [];
+let analysisMode = 'auto';
+let selectedProvider = 'auto';
+let parlayLegs = [
+  { odds: '1.5', result: 'full' },
+  { odds: '1.5', result: 'full' },
+  { odds: '1.5', result: 'full' }
+];
+
+// =============================================
+//  UTILITY
+// =============================================
+function toast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span>${type==='success'?'✅':type==='error'?'❌':'ℹ️'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+function showScan(msg='Processing...') {
+  document.getElementById('scanOverlay').classList.add('show');
+  document.getElementById('scanProgress').textContent = msg;
+}
+
+function hideScan() {
+  document.getElementById('scanOverlay').classList.remove('show');
+}
+
+function clockTick() {
+  const now = new Date();
+  document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('en-GB', {hour12:false});
+}
+setInterval(clockTick, 1000);
+clockTick();
+
+
+// =============================================
+//  MONEY / STAKE UTILITY
+// =============================================
+function parseCurrencyAmount(value) {
+  if (value === null || value === undefined) return null;
+  const digitOnly = String(value).replace(/rp/gi, '').replace(/[^0-9]/g, '');
+  if (!digitOnly) return null;
+  const amount = Number(digitOnly);
+  return Number.isFinite(amount) ? amount : null;
+}
+
+function formatRupiah(value) {
+  if (value === null || value === undefined || !Number.isFinite(Number(value))) return '-';
+  const sign = Number(value) < 0 ? '-' : '';
+  return sign + 'Rp ' + Math.abs(Math.round(Number(value))).toLocaleString('id-ID');
+}
+
+function getDefaultStake() {
+  const el = document.getElementById('defaultStakeInput');
+  return el ? (parseCurrencyAmount(el.value) || 0) : 0;
+}
+
+function extractStakeFromRaw(raw) {
+  const patterns = [
+    /^(?:Stake|Stake Amount|Bet Amount|Bettingan|Jumlah Bet|Nominal|Modal)\s*:\s*(.+)$/im,
+    /^(?:Stake|Stake Amount|Bettingan|Jumlah Bet|Nominal|Modal)\s+(.+)$/im
+  ];
+  for (const pattern of patterns) {
+    const m = raw.match(pattern);
+    if (m) {
+      const amount = parseCurrencyAmount(m[1]);
+      if (amount !== null) return amount;
+    }
+  }
+  return null;
+}
+
+function calculateBetMoney(status, stake, odds) {
+  if (!stake || !odds || status === 'PENDING' || status === 'INVALID DATA') {
+    return { payout: null, profit: null, note: 'Payout belum dihitung karena data belum settled / tidak valid.' };
+  }
+
+  let payout = null;
+  let note = '';
+
+  if (status === 'WIN') {
+    payout = stake * odds;
+    note = 'WIN: stake x odds';
+  } else if (status === 'HALF WIN') {
+    payout = (stake / 2 * odds) + (stake / 2);
+    note = 'HALF WIN: 50% stake menang, 50% stake refund';
+  } else if (status === 'HALF LOSE') {
+    payout = stake / 2;
+    note = 'HALF LOSE: 50% stake kalah, 50% stake refund';
+  } else if (status === 'REFUND' || status === 'VOID') {
+    payout = stake;
+    note = 'REFUND/VOID: modal kembali';
+  } else if (status === 'LOSE') {
+    payout = 0;
+    note = 'LOSE: payout 0';
+  }
+
+  if (payout === null) return { payout: null, profit: null, note };
+  return { payout, profit: payout - stake, note };
+}
+
+function finalizeBetMoney(r) {
+  const calc = calculateBetMoney(r.status, r.stake, r.odds);
+  r.payout = calc.payout;
+  r.profit = calc.profit;
+  r.payoutNote = calc.note;
+
+  if (!Array.isArray(r.details)) r.details = [];
+
+  if (r.stake) {
+    r.details.push(['Bettingan', formatRupiah(r.stake) + (r.stakeSource === 'default' ? ' (default)' : ' (ticket)')]);
+  }
+  if (r.payout !== null && r.payout !== undefined) {
+    r.details.push(['Payout / Return', formatRupiah(r.payout)]);
+    r.details.push(['Profit / Loss', formatRupiah(r.profit)]);
+    r.details.push(['Rumus Payout', r.payoutNote]);
+
+    const profitLabel = r.profit > 0 ? 'profit' : r.profit < 0 ? 'loss' : 'netral';
+    r.reason = `${r.reason} Bettingan ${formatRupiah(r.stake)} menghasilkan payout ${formatRupiah(r.payout)} (${profitLabel} ${formatRupiah(Math.abs(r.profit))}).`;
+  } else if (r.stake && r.status === 'PENDING') {
+    r.details.push(['Payout / Return', 'Belum settled']);
+  }
+
+  return r;
+}
+
+// =============================================
+//  NAVIGATION
+// =============================================
+function switchPage(page) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const btns = document.querySelectorAll('.nav-item');
+  btns.forEach(b => { if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+page+"'")) b.classList.add('active'); });
+  if(page === 'statistics') updateStatistics();
+  if(page === 'analysis') renderAnalysisPage();
+  if(page === 'result') renderResults();
+  if(page === 'mixparlay') renderParlayLegs();
+}
+
+// =============================================
+//  PROVIDER / MODE
+// =============================================
+function updateProviderBadge() {
+  const val = document.getElementById('providerSelect').value;
+  selectedProvider = val;
+  const map = { auto:'AUTO DETECT', sbo:'SBO', ap:'AP', tf:'TF GAMING' };
+  document.getElementById('activeProv').textContent = map[val] || 'AUTO';
+  syncBothProviders(val);
+}
+
+function syncProvider(el) {
+  selectedProvider = el.value;
+  document.getElementById('providerSelect').value = el.value;
+  updateProviderBadge();
+}
+
+function syncBothProviders(val) {
+  document.getElementById('providerSelect').value = val;
+  document.getElementById('providerSelect2').value = val;
+}
+
+function updateMode(radio) {
+  analysisMode = radio.value;
+  document.querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+  radio.closest('.radio-item').classList.add('selected');
+}
+
+function updateModeS(radio) {
+  analysisMode = radio.value;
+  document.querySelectorAll('[name="analysisModeS"]').forEach(r => r.closest('.radio-item').classList.remove('selected'));
+  radio.closest('.radio-item').classList.add('selected');
+  document.querySelectorAll('[name="analysisMode"]').forEach(r => { if(r.value===radio.value) { r.checked=true; r.closest('.radio-item').classList.add('selected'); } });
+}
+
+// =============================================
+//  DATA LOADING
+// =============================================
+function loadExample() {
+  const examples = [
+`Football
+e-Liverpool vs e-Manchester City
+e-Football F24 Elite Club Friendly
+2026-05-22T04:30:00.000
+Stake: Rp 100.000
+Type: Europe
+Bet: 1X2 1 0 @2.56
+Half time result: 3:2
+Full time result: 4:3`,
+`---
+Football
+Real Madrid vs Barcelona
+La Liga
+2026-05-22T20:00:00.000
+Type: Europe
+Bet: Handicap Home -0.5 @1.92
+Half time result: 1:0
+Full time result: 2:1`,
+`---
+Football
+Manchester United vs Chelsea
+Premier League
+2026-05-21T17:00:00.000
+Type: Europe
+Bet: Over 2.5 @1.88
+Half time result: 0:1
+Full time result: 1:2`,
+`---
+Football
+Arsenal vs Tottenham
+Premier League
+2026-05-20T19:00:00.000
+Type: Europe
+Bet: 1X2 X 0 @3.40
+Half time result: 0:0
+Full time result: 1:1`,
+`---
+Football
+PSG vs Lyon
+Ligue 1
+2026-05-19T21:00:00.000
+Type: Europe
+Bet: BTTS Yes @1.75
+Half time result: 1:1
+Full time result: 2:1`,
+`---
+Football
+Bayern Munich vs Dortmund
+Bundesliga
+2026-05-18T19:30:00.000
+Type: Europe
+Bet: AH 1 -1.5 @2.10
+Half time result: 2:0
+Full time result: 3:0`
+  ];
+  document.getElementById('betInput').value = examples.join('\n');
+  toast('Contoh data loaded! Klik CHECK NOW', 'info');
+}
+
+// =============================================
+//  FILE IMPORT
+// =============================================
+function importFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext === 'txt' || ext === 'csv') {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('betInput').value = e.target.result;
+      toast('File imported: ' + file.name, 'success');
+    };
+    reader.readAsText(file);
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    toast('XLSX: Paste konten sebagai teks atau gunakan format TXT/CSV', 'error');
+  }
+  event.target.value = '';
+}
+
+// =============================================
+//  MAIN CHECKER ENGINE
+// =============================================
+function clearInput() {
+  document.getElementById('betInput').value = '';
+}
+
+function clearResults() {
+  results = [];
+  renderResults();
+  updateResultBadge();
+  updateStatistics();
+  toast('Results cleared', 'info');
+}
+
+function runChecker() {
+  const raw = document.getElementById('betInput').value.trim();
+  if (!raw) { toast('Input data dulu!', 'error'); return; }
+  showScan('Memecah data tiket...');
+  setTimeout(() => {
+    const tickets = splitTickets(raw);
+    document.getElementById('scanProgress').textContent = `Menganalisa ${tickets.length} tiket...`;
+    setTimeout(() => {
+      results = [];
+      tickets.forEach((t, i) => {
+        if (t.trim()) {
+          const parsed = parseTicket(t);
+          const checked = checkBet(parsed);
+          results.push(checked);
+        }
+      });
+      hideScan();
+      updateResultBadge();
+      renderResults();
+      renderAnalysisPage();
+      updateStatistics();
+      switchPage('result');
+      toast(`${results.length} tiket diproses!`, 'success');
+    }, 600);
+  }, 300);
+}
+
+// =============================================
+//  TICKET SPLITTER
+// =============================================
+function splitTickets(raw) {
+  // Split on --- separator, or detect multiple tickets by blank lines + repeated structure
+  let parts = raw.split(/\n\s*---+\s*\n/);
+  if (parts.length === 1) {
+    // Try to split on repeated "Football\n" or "Sport:" keyword
+    parts = raw.split(/(?=\n(?:Football|Basketball|Tennis|Baseball|Sport\s*:)\s*\n)/i);
+    if (parts.length === 1) {
+      // Fall back to splitting on double blank lines
+      parts = raw.split(/\n\s*\n\s*\n/);
+    }
+  }
+  return parts.filter(p => p.trim().length > 0);
+}
+
+// =============================================
+//  TICKET PARSER (Multi-Provider)
+// =============================================
+function parseTicket(raw) {
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
+  const obj = {
+    raw,
+    provider: 'UNKNOWN',
+    sport: '',
+    homeTeam: '',
+    awayTeam: '',
+    league: '',
+    date: '',
+    type: '',
+    market: '',
+    pick: '',
+    line: null,
+    odds: null,
+    stake: null,
+    stakeSource: '',
+    payout: null,
+    profit: null,
+    payoutNote: '',
+    halfTimeScore: null,
+    fullTimeScore: null,
+    parseErrors: []
+  };
+
+  // ---- Detect Stake / Betting Amount ----
+  const stakeFromTicket = extractStakeFromRaw(raw);
+  if (stakeFromTicket !== null) {
+    obj.stake = stakeFromTicket;
+    obj.stakeSource = 'ticket';
+  } else {
+    const defaultStake = getDefaultStake();
+    if (defaultStake > 0) {
+      obj.stake = defaultStake;
+      obj.stakeSource = 'default';
+    }
+  }
+
+  // ---- Detect Provider ----
+  const provSetting = selectedProvider;
+  if (provSetting !== 'auto') {
+    obj.provider = provSetting.toUpperCase();
+  } else {
+    // Auto detect
+    const joinedLower = raw.toLowerCase();
+    if (joinedLower.includes('sbo') || (lines[0] && /^football$|^basketball$|^tennis$/i.test(lines[0]))) {
+      obj.provider = 'SBO';
+    } else if (joinedLower.includes('ap sportsbook') || joinedLower.includes('match:')) {
+      obj.provider = 'AP';
+    } else if (joinedLower.includes('tf gaming') || joinedLower.includes('event:')) {
+      obj.provider = 'TF';
+    } else {
+      obj.provider = 'SBO'; // default
+    }
+  }
+
+  // ---- Parse by Provider ----
+  if (obj.provider === 'AP') {
+    parseProviderAP(lines, obj);
+  } else if (obj.provider === 'TF') {
+    parsePProviderTF(lines, obj);
+  } else {
+    parseProviderSBO(lines, obj);
+  }
+
+  return obj;
+}
+
+function parseProviderSBO(lines, obj) {
+  // Line 0: Sport
+  if (lines[0] && !/:/i.test(lines[0])) {
+    obj.sport = lines[0];
+  }
+  // Line 1: Teams
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    const vsMatch = l.match(/^(.+?)\s+vs\s+(.+)$/i);
+    if (vsMatch && !l.toLowerCase().startsWith('bet:')) {
+      obj.homeTeam = vsMatch[1].trim();
+      obj.awayTeam = vsMatch[2].trim();
+      // Next line: league
+      if (lines[i+1] && !lines[i+1].match(/^\d{4}-/) && !/:/i.test(lines[i+1])) {
+        obj.league = lines[i+1];
+      }
+      continue;
+    }
+    // Date
+    if (l.match(/^\d{4}-\d{2}-\d{2}/)) { obj.date = l; continue; }
+    // Type
+    const typeM = l.match(/^Type\s*:\s*(.+)$/i);
+    if (typeM) { obj.type = typeM[1].trim(); continue; }
+    // Bet line
+    const betM = l.match(/^Bet\s*:\s*(.+)$/i);
+    if (betM) { parseBetString(betM[1].trim(), obj); continue; }
+    // HT
+    const htM = l.match(/^Half\s*time\s*result\s*:\s*(.+)$/i);
+    if (htM) { obj.halfTimeScore = parseScore(htM[1].trim()); continue; }
+    // FT
+    const ftM = l.match(/^Full\s*time\s*result\s*:\s*(.+)$/i);
+    if (ftM) { obj.fullTimeScore = parseScore(ftM[1].trim()); continue; }
+  }
+}
+
+function parseProviderAP(lines, obj) {
+  obj.sport = 'Football';
+  for (const l of lines) {
+    const matchM = l.match(/^Match\s*:\s*(.+?)\s*[-–]\s*(.+)$/i);
+    if (matchM) { obj.homeTeam = matchM[1].trim(); obj.awayTeam = matchM[2].trim(); continue; }
+    const vsM = l.match(/^Match\s*:\s*(.+?)\s+vs\s+(.+)$/i);
+    if (vsM) { obj.homeTeam = vsM[1].trim(); obj.awayTeam = vsM[2].trim(); continue; }
+    const leagueM = l.match(/^League\s*:\s*(.+)$/i);
+    if (leagueM) { obj.league = leagueM[1].trim(); continue; }
+    const marketM = l.match(/^Market\s*:\s*(.+)$/i);
+    if (marketM) { obj.market = normalizeMarket(marketM[1].trim()); continue; }
+    const selM = l.match(/^Selection\s*:\s*(.+)$/i);
+    if (selM) { obj.pick = selM[1].trim(); continue; }
+    const oddsM = l.match(/^Odds\s*:\s*([\d.]+)$/i);
+    if (oddsM) { obj.odds = parseFloat(oddsM[1]); continue; }
+    const htM = l.match(/^HT\s*:\s*(.+)$/i);
+    if (htM) { obj.halfTimeScore = parseScore(htM[1].trim()); continue; }
+    const ftM = l.match(/^FT\s*:\s*(.+)$/i);
+    if (ftM) { obj.fullTimeScore = parseScore(ftM[1].trim()); continue; }
+    const sportM = l.match(/^Sport\s*:\s*(.+)$/i);
+    if (sportM) { obj.sport = sportM[1].trim(); continue; }
+    const dateM = l.match(/^Date\s*:\s*(.+)$/i);
+    if (dateM) { obj.date = dateM[1].trim(); continue; }
+  }
+  // If market set but pick not via Selection, derive from market string
+  if (!obj.pick && obj.market) {
+    const parts = obj.market.split(/\s+/);
+    if (parts.length > 1) { obj.pick = parts.slice(1).join(' '); obj.market = parts[0]; }
+  }
+}
+
+function parsePProviderTF(lines, obj) {
+  obj.sport = 'Football';
+  for (const l of lines) {
+    const sportM = l.match(/^Sport\s*:\s*(.+)$/i);
+    if (sportM) { obj.sport = sportM[1].trim(); continue; }
+    const eventM = l.match(/^Event\s*:\s*(.+?)\s+vs\s+(.+)$/i);
+    if (eventM) { obj.homeTeam = eventM[1].trim(); obj.awayTeam = eventM[2].trim(); continue; }
+    const eventM2 = l.match(/^Event\s*:\s*(.+?)\s*[-–]\s*(.+)$/i);
+    if (eventM2) { obj.homeTeam = eventM2[1].trim(); obj.awayTeam = eventM2[2].trim(); continue; }
+    const betTypeM = l.match(/^Bet\s*Type\s*:\s*(.+)$/i);
+    if (betTypeM) { obj.market = normalizeMarket(betTypeM[1].trim()); continue; }
+    const pickM = l.match(/^Pick\s*:\s*(.+)$/i);
+    if (pickM) {
+      const pickStr = pickM[1].trim();
+      // Over/Under with line
+      const ouM = pickStr.match(/^(Over|Under)\s+([\d.]+)$/i);
+      if (ouM) { obj.pick = ouM[1]; obj.line = parseFloat(ouM[2]); }
+      else obj.pick = pickStr;
+      continue;
+    }
+    const oddsM = l.match(/^Odds\s*:\s*([\d.]+)$/i);
+    if (oddsM) { obj.odds = parseFloat(oddsM[1]); continue; }
+    const halfM = l.match(/^Half\s*:\s*(.+)$/i);
+    if (halfM) { obj.halfTimeScore = parseScore(halfM[1].trim()); continue; }
+    const finalM = l.match(/^Final\s*:\s*(.+)$/i);
+    if (finalM) { obj.fullTimeScore = parseScore(finalM[1].trim()); continue; }
+    const htM = l.match(/^HT\s*:\s*(.+)$/i);
+    if (htM) { obj.halfTimeScore = parseScore(htM[1].trim()); continue; }
+    const ftM = l.match(/^FT\s*:\s*(.+)$/i);
+    if (ftM) { obj.fullTimeScore = parseScore(ftM[1].trim()); continue; }
+    const leagueM = l.match(/^League\s*:\s*(.+)$/i);
+    if (leagueM) { obj.league = leagueM[1].trim(); continue; }
+  }
+}
+
+// =============================================
+//  BET STRING PARSER (SBO style)
+// =============================================
+function parseBetString(bet, obj) {
+  // Odds: @X.XX
+  const oddsM = bet.match(/@([\d.]+)/);
+  if (oddsM) obj.odds = parseFloat(oddsM[1]);
+  const betNoOdds = bet.replace(/@[\d.]+/, '').trim();
+
+  // Try patterns
+  // 1X2
+  const p1x2 = betNoOdds.match(/^1X2\s+([12X])\s*([\d.-]*)/i);
+  if (p1x2) { obj.market = '1X2'; obj.pick = p1x2[1].toUpperCase(); obj.line = p1x2[2] ? parseFloat(p1x2[2]) : 0; return; }
+
+  // HT 1X2
+  const pHT1X2 = betNoOdds.match(/^(?:HT|Half\s*Time)\s+1X2\s+([12X])/i);
+  if (pHT1X2) { obj.market = 'HT1X2'; obj.pick = pHT1X2[1].toUpperCase(); return; }
+
+  // HT Over/Under
+  const pHTOU = betNoOdds.match(/^(?:HT|Half\s*Time)\s+(?:Over|Under)\s+([\d.]+)/i);
+  if (pHTOU) { obj.market = 'HTOU'; obj.pick = betNoOdds.match(/over/i) ? 'Over' : 'Under'; obj.line = parseFloat(pHTOU[1]); return; }
+
+  // Over/Under / Total Goal
+  const pOU = betNoOdds.match(/(?:Over|Under|O\/U|Total\s*Goal\s*(?:Over|Under))\s+([\d.]+)/i);
+  if (pOU) {
+    obj.market = 'OU';
+    obj.pick = /over|^o\//i.test(betNoOdds) ? 'Over' : 'Under';
+    obj.line = parseFloat(pOU[1]);
+    return;
+  }
+
+  // Handicap: AH 1/2 +/-X.X or Handicap Home/Away +/-X
+  const pAH = betNoOdds.match(/(?:AH|Handicap|HDP)\s+(Home|Away|1|2)\s*([+-]?[\d.]+)/i);
+  if (pAH) {
+    obj.market = 'HDP';
+    obj.pick = /home|1/i.test(pAH[1]) ? 'Home' : 'Away';
+    obj.line = parseFloat(pAH[2]);
+    return;
+  }
+
+  // Correct Score: CS X-Y or Correct Score X:Y
+  const pCS = betNoOdds.match(/(?:Correct\s*Score|CS)\s+(\d+)[:\-](\d+)/i);
+  if (pCS) { obj.market = 'CS'; obj.pick = pCS[1]+':'+pCS[2]; return; }
+
+  // Double Chance
+  const pDC = betNoOdds.match(/Double\s*Chance\s+(1X|12|X2)/i);
+  if (pDC) { obj.market = 'DC'; obj.pick = pDC[1].toUpperCase(); return; }
+
+  // Draw No Bet
+  const pDNB = betNoOdds.match(/(?:DNB|Draw\s*No\s*Bet)\s+(Home|Away|1|2)/i);
+  if (pDNB) { obj.market = 'DNB'; obj.pick = /home|1/i.test(pDNB[1]) ? 'Home' : 'Away'; return; }
+
+  // BTTS
+  const pBTTS = betNoOdds.match(/(?:BTTS|Both\s*Teams?\s*(?:To\s*)?Score)\s+(Yes|No)/i);
+  if (pBTTS) { obj.market = 'BTTS'; obj.pick = pBTTS[1]; return; }
+
+  // Odd/Even
+  const pOE = betNoOdds.match(/^(Odd|Even)\s*$/i);
+  if (pOE) { obj.market = 'ODDEVEN'; obj.pick = pOE[1]; return; }
+
+  // Fallback: whole bet string
+  obj.market = betNoOdds;
+  obj.pick = '';
+  obj.parseErrors.push('Market tidak dikenali: ' + betNoOdds);
+}
+
+function normalizeMarket(m) {
+  if (/1x2/i.test(m)) return '1X2';
+  if (/over.under|o\/u/i.test(m)) return 'OU';
+  if (/handicap|hdp|asian/i.test(m)) return 'HDP';
+  if (/half.time.1x2/i.test(m)) return 'HT1X2';
+  if (/half.time.over|ht.o\/u/i.test(m)) return 'HTOU';
+  if (/correct.score/i.test(m)) return 'CS';
+  if (/double.chance/i.test(m)) return 'DC';
+  if (/draw.no.bet|dnb/i.test(m)) return 'DNB';
+  if (/btts|both.teams/i.test(m)) return 'BTTS';
+  if (/odd|even/i.test(m)) return 'ODDEVEN';
+  return m;
+}
+
+function parseScore(s) {
+  const m = s.match(/^(\d+)\s*[:\-]\s*(\d+)$/);
+  if (m) return { home: parseInt(m[1]), away: parseInt(m[2]) };
+  return null;
+}
+
+// =============================================
+//  BET CHECKER LOGIC
+// =============================================
+function checkBet(obj) {
+  const r = { ...obj, status: 'PENDING', reason: '', details: [] };
+
+  // Validate basics
+  if (!obj.homeTeam || !obj.awayTeam) {
+    r.status = 'INVALID DATA';
+    r.reason = 'Data tidak lengkap: nama tim tidak ditemukan dalam data.';
+    return finalizeBetMoney(r);
+  }
+  if (!obj.market || obj.market === '') {
+    r.status = 'INVALID DATA';
+    r.reason = 'Data tidak lengkap: market taruhan tidak terbaca.';
+    return finalizeBetMoney(r);
+  }
+  if (!obj.odds) {
+    r.status = 'INVALID DATA';
+    r.reason = 'Data tidak lengkap: odds tidak ditemukan.';
+    return finalizeBetMoney(r);
+  }
+
+  const mkt = obj.market.toUpperCase();
+
+  // Half Time markets need HT score
+  if ((mkt === 'HT1X2' || mkt === 'HTOU') && !obj.halfTimeScore) {
+    r.status = 'INVALID DATA';
+    r.reason = 'Data tidak lengkap: Half Time result tidak ditemukan.';
+    return finalizeBetMoney(r);
+  }
+
+  // Full time markets
+  if (mkt !== 'HT1X2' && mkt !== 'HTOU' && !obj.fullTimeScore) {
+    r.status = 'PENDING';
+    r.reason = 'Full time result belum tersedia. Tiket masih berstatus PENDING.';
+    return finalizeBetMoney(r);
+  }
+
+  let checked;
+  switch (mkt) {
+    case '1X2': checked = check1X2(r); break;
+    case 'HDP': checked = checkHandicap(r); break;
+    case 'OU': checked = checkOU(r); break;
+    case 'HT1X2': checked = checkHT1X2(r); break;
+    case 'HTOU': checked = checkHTOU(r); break;
+    case 'CS': checked = checkCS(r); break;
+    case 'DC': checked = checkDC(r); break;
+    case 'DNB': checked = checkDNB(r); break;
+    case 'BTTS': checked = checkBTTS(r); break;
+    case 'ODDEVEN': checked = checkOddEven(r); break;
+    default:
+      r.status = 'INVALID DATA';
+      r.reason = `Market "${obj.market}" tidak dikenali oleh sistem.`;
+      checked = r;
+  }
+
+  return finalizeBetMoney(checked);
+}
+
+function check1X2(r) {
+  const ft = r.fullTimeScore;
+  const pick = r.pick.toUpperCase();
+  const home = ft.home, away = ft.away;
+  r.details = [
+    ['Market', '1X2'],
+    ['Pick', pick + (pick==='1'?' (Home)':pick==='2'?' (Away)':' (Draw)')],
+    ['Home Score (FT)', home],
+    ['Away Score (FT)', away],
+  ];
+  if (pick === '1' || pick === 'HOME') {
+    if (home > away) { r.status='WIN'; r.reason=`Pilihan 1X2 1 (Home). Skor FT ${home}:${away}. Home (${r.homeTeam}) menang. Taruhan dinyatakan WIN.`; }
+    else if (home < away) { r.status='LOSE'; r.reason=`Pilihan 1X2 1 (Home). Skor FT ${home}:${away}. Home (${r.homeTeam}) kalah. Taruhan dinyatakan LOSE.`; }
+    else { r.status='LOSE'; r.reason=`Pilihan 1X2 1 (Home). Skor FT ${home}:${away}. Pertandingan berakhir seri. Taruhan 1 dinyatakan LOSE.`; }
+  } else if (pick === '2' || pick === 'AWAY') {
+    if (away > home) { r.status='WIN'; r.reason=`Pilihan 1X2 2 (Away). Skor FT ${home}:${away}. Away (${r.awayTeam}) menang. Taruhan dinyatakan WIN.`; }
+    else if (away < home) { r.status='LOSE'; r.reason=`Pilihan 1X2 2 (Away). Skor FT ${home}:${away}. Away (${r.awayTeam}) kalah. Taruhan dinyatakan LOSE.`; }
+    else { r.status='LOSE'; r.reason=`Pilihan 1X2 2 (Away). Skor FT ${home}:${away}. Pertandingan berakhir seri. Taruhan 2 dinyatakan LOSE.`; }
+  } else if (pick === 'X' || pick === 'DRAW') {
+    if (home === away) { r.status='WIN'; r.reason=`Pilihan 1X2 X (Draw). Skor FT ${home}:${away}. Pertandingan berakhir seri. Taruhan X dinyatakan WIN.`; }
+    else { r.status='LOSE'; r.reason=`Pilihan 1X2 X (Draw). Skor FT ${home}:${away}. Pertandingan tidak berakhir seri. Taruhan X dinyatakan LOSE.`; }
+  } else {
+    r.status='INVALID DATA'; r.reason=`Pick "${r.pick}" tidak valid untuk market 1X2. Nilai valid: 1, 2, X.`;
+  }
+  r.details.push(['Hasil', r.status]);
+  return r;
+}
+
+function checkHandicap(r) {
+  const ft = r.fullTimeScore;
+  const home = ft.home, away = ft.away;
+  const hdp = r.line !== null ? r.line : 0;
+  const pick = r.pick.toLowerCase();
+
+  let adjHome, adjAway, teamName;
+
+  if (pick === 'home' || pick === '1') {
+    adjHome = home + hdp;
+    adjAway = away;
+    teamName = r.homeTeam;
+  } else {
+    adjHome = home;
+    adjAway = away + (-hdp); // if pick Away, invert handicap
+    adjAway = away - hdp;
+    teamName = r.awayTeam;
+  }
+
+  r.details = [
+    ['Market', 'Handicap / Asian Handicap'],
+    ['Pick', (pick==='home'||pick==='1') ? 'Home ('+r.homeTeam+')' : 'Away ('+r.awayTeam+')'],
+    ['Handicap Line', hdp],
+    ['Home FT', home],
+    ['Away FT', away],
+    ['Adjusted Score', adjHome + ':' + adjAway.toFixed ? adjAway : adjAway],
+  ];
+
+  const result = computeHDP(home, away, hdp, pick);
+  r.status = result.status;
+  r.reason = result.reason.replace('{HOME}', r.homeTeam).replace('{AWAY}', r.awayTeam);
+  r.details.push(['Hasil', r.status]);
+  return r;
+}
+
+function computeHDP(home, away, hdp, pick) {
+  // Handle split lines
+  const abs = Math.abs(hdp);
+  const dec = abs - Math.floor(abs);
+  const isQuarter = Math.abs(dec - 0.25) < 0.001 || Math.abs(dec - 0.75) < 0.001;
+
+  if (isQuarter) {
+    // Split: half at floor, half at ceil
+    const hdp1 = hdp > 0 ? Math.floor(hdp*2)/2 : Math.ceil(hdp*2)/2;
+    const hdp2 = hdp > 0 ? Math.ceil(hdp*2)/2 : Math.floor(hdp*2)/2;
+    const r1 = computeHDPLine(home, away, hdp1, pick);
+    const r2 = computeHDPLine(home, away, hdp2, pick);
+    if (r1 === 'WIN' && r2 === 'WIN') return { status:'WIN', reason:`Split handicap ${hdp} → kedua bagian WIN.` };
+    if (r1 === 'LOSE' && r2 === 'LOSE') return { status:'LOSE', reason:`Split handicap ${hdp} → kedua bagian LOSE.` };
+    if (r1 === 'WIN' && r2 === 'REFUND') return { status:'HALF WIN', reason:`Split handicap ${hdp} → satu bagian WIN, satu bagian REFUND. Status: HALF WIN.` };
+    if (r1 === 'REFUND' && r2 === 'WIN') return { status:'HALF WIN', reason:`Split handicap ${hdp} → satu bagian WIN, satu bagian REFUND. Status: HALF WIN.` };
+    if (r1 === 'LOSE' && r2 === 'REFUND') return { status:'HALF LOSE', reason:`Split handicap ${hdp} → satu bagian LOSE, satu bagian REFUND. Status: HALF LOSE.` };
+    if (r1 === 'REFUND' && r2 === 'LOSE') return { status:'HALF LOSE', reason:`Split handicap ${hdp} → satu bagian LOSE, satu bagian REFUND. Status: HALF LOSE.` };
+    if ((r1==='WIN'&&r2==='LOSE')||(r1==='LOSE'&&r2==='WIN')) return { status:'HALF WIN', reason:`Split handicap ${hdp} → satu WIN satu LOSE. Status: HALF WIN.` };
+    return { status:'REFUND', reason:`Split handicap ${hdp} → kedua bagian Refund.` };
+  }
+
+  const res = computeHDPLine(home, away, hdp, pick);
+  const fmtHdp = hdp >= 0 ? '+'+hdp : ''+hdp;
+  if (res === 'WIN') return { status:'WIN', reason:`Pilih ${pick==='home'||pick==='1'?'{HOME}':'{AWAY}'} dengan handicap ${fmtHdp}. Skor FT ${home}:${away}. Setelah handicap: unggul. WIN.` };
+  if (res === 'LOSE') return { status:'LOSE', reason:`Pilih ${pick==='home'||pick==='1'?'{HOME}':'{AWAY}'} dengan handicap ${fmtHdp}. Skor FT ${home}:${away}. Setelah handicap: kalah. LOSE.` };
+  return { status:'REFUND', reason:`Pilih ${pick==='home'||pick==='1'?'{HOME}':'{AWAY}'} dengan handicap ${fmtHdp}. Skor FT ${home}:${away}. Setelah handicap: seri. REFUND.` };
+}
+
+function computeHDPLine(home, away, hdp, pick) {
+  let adjH, adjA;
+  if (pick === 'home' || pick === '1') { adjH = home + hdp; adjA = away; }
+  else { adjH = home; adjA = away - hdp; }
+  if (adjH > adjA) return pick==='home'||pick==='1' ? 'WIN' : 'LOSE';
+  if (adjH < adjA) return pick==='home'||pick==='1' ? 'LOSE' : 'WIN';
+  return 'REFUND';
+}
+
+function checkOU(r) {
+  const ft = r.fullTimeScore;
+  const total = ft.home + ft.away;
+  const line = r.line;
+  const pick = r.pick.toLowerCase();
+
+  r.details = [
+    ['Market', 'Over/Under'],
+    ['Pick', r.pick + ' ' + line],
+    ['Home FT', ft.home],
+    ['Away FT', ft.away],
+    ['Total Goal', total],
+    ['Line', line],
+  ];
+
+  const result = computeOU(total, line, pick);
+  r.status = result.status;
+  r.reason = result.reason;
+  r.details.push(['Hasil', r.status]);
+  return r;
+}
+
+function computeOU(total, line, pick) {
+  const dec = line - Math.floor(line);
+  const isQuarter = Math.abs(dec - 0.25) < 0.001 || Math.abs(dec - 0.75) < 0.001;
+
+  if (isQuarter) {
+    const line1 = Math.floor(line * 2) / 2;
+    const line2 = Math.ceil(line * 2) / 2;
+    const r1 = computeOULine(total, line1, pick);
+    const r2 = computeOULine(total, line2, pick);
+    if (r1 === 'WIN' && r2 === 'WIN') return { status:'WIN', reason:`Split O/U ${line}: total gol ${total}. Kedua bagian WIN.` };
+    if (r1 === 'LOSE' && r2 === 'LOSE') return { status:'LOSE', reason:`Split O/U ${line}: total gol ${total}. Kedua bagian LOSE.` };
+    if ((r1==='WIN'&&r2==='REFUND')||(r1==='REFUND'&&r2==='WIN')) return { status:'HALF WIN', reason:`Split O/U ${line}: total gol ${total}. Satu WIN satu REFUND → HALF WIN.` };
+    if ((r1==='LOSE'&&r2==='REFUND')||(r1==='REFUND'&&r2==='LOSE')) return { status:'HALF LOSE', reason:`Split O/U ${line}: total gol ${total}. Satu LOSE satu REFUND → HALF LOSE.` };
+    return { status:'HALF WIN', reason:`Split O/U ${line}: total gol ${total}. Status HALF WIN.` };
+  }
+
+  const res = computeOULine(total, line, pick);
+  if (res === 'WIN') return { status:'WIN', reason:`Pilih ${pick} ${line}. Total gol ${total}. ${pick==='over'?'Lebih':'Kurang dari'} ${line}. WIN.` };
+  if (res === 'LOSE') return { status:'LOSE', reason:`Pilih ${pick} ${line}. Total gol ${total}. ${pick==='over'?'Tidak melebihi':'Melebihi'} ${line}. LOSE.` };
+  return { status:'REFUND', reason:`Total gol tepat ${line}. REFUND.` };
+}
+
+function computeOULine(total, line, pick) {
+  if (pick === 'over') { if (total > line) return 'WIN'; if (total < line) return 'LOSE'; return 'REFUND'; }
+  else { if (total < line) return 'WIN'; if (total > line) return 'LOSE'; return 'REFUND'; }
+}
+
+function checkHT1X2(r) {
+  const ht = r.halfTimeScore;
+  const pick = r.pick.toUpperCase();
+  r.details = [
+    ['Market', 'Half Time 1X2'],
+    ['Pick', pick],
+    ['HT Score', ht.home+':'+ht.away],
+  ];
+  if (pick==='1'||pick==='HOME') {
+    r.status = ht.home>ht.away?'WIN':'LOSE';
+    r.reason = `HT 1X2 pilih Home. HT ${ht.home}:${ht.away}. ${ht.home>ht.away?`Home unggul di babak pertama → WIN.`:`Home tidak unggul di babak pertama → LOSE.`}`;
+  } else if (pick==='2'||pick==='AWAY') {
+    r.status = ht.away>ht.home?'WIN':'LOSE';
+    r.reason = `HT 1X2 pilih Away. HT ${ht.home}:${ht.away}. ${ht.away>ht.home?`Away unggul di babak pertama → WIN.`:`Away tidak unggul → LOSE.`}`;
+  } else if (pick==='X'||pick==='DRAW') {
+    r.status = ht.home===ht.away?'WIN':'LOSE';
+    r.reason = `HT 1X2 pilih Draw. HT ${ht.home}:${ht.away}. ${ht.home===ht.away?`Seri di babak pertama → WIN.`:`Tidak seri → LOSE.`}`;
+  }
+  r.details.push(['Hasil', r.status]);
+  return r;
+}
+
+function checkHTOU(r) {
+  const ht = r.halfTimeScore;
+  const total = ht.home + ht.away;
+  const result = computeOU(total, r.line, r.pick.toLowerCase());
+  r.status = result.status;
+  r.reason = `HT O/U: babak pertama ${ht.home}:${ht.away}, total ${total}. ` + result.reason;
+  r.details = [
+    ['Market', 'HT Over/Under'],
+    ['Pick', r.pick + ' ' + r.line],
+    ['HT Score', ht.home+':'+ht.away],
+    ['Total HT Goal', total],
+    ['Hasil', r.status],
+  ];
+  return r;
+}
+
+function checkCS(r) {
+  const ft = r.fullTimeScore;
+  const pick = r.pick.replace('-', ':');
+  const actual = ft.home+':'+ft.away;
+  r.status = pick === actual ? 'WIN' : 'LOSE';
+  r.reason = `Correct Score pilih ${pick}. Skor FT aktual ${actual}. ${pick===actual?'Skor tepat sama → WIN.':'Skor tidak sama → LOSE.'}`;
+  r.details = [['Market','Correct Score'],['Pick',pick],['FT Score',actual],['Hasil',r.status]];
+  return r;
+}
+
+function checkDC(r) {
+  const ft = r.fullTimeScore;
+  const home=ft.home, away=ft.away;
+  const pick = r.pick.toUpperCase();
+  let win = false;
+  if (pick==='1X') win = home>=away; // home win or draw
+  else if (pick==='12') win = home!==away; // either team wins
+  else if (pick==='X2') win = away>=home; // draw or away win
+  r.status = win ? 'WIN' : 'LOSE';
+  const dcMap = {'1X':'Home Win atau Draw','12':'Home Win atau Away Win','X2':'Draw atau Away Win'};
+  r.reason = `Double Chance ${pick} (${dcMap[pick]||pick}). FT ${home}:${away}. ${win?'Kondisi terpenuhi → WIN.':'Kondisi tidak terpenuhi → LOSE.'}`;
+  r.details = [['Market','Double Chance'],['Pick',pick],['FT Score',home+':'+away],['Hasil',r.status]];
+  return r;
+}
+
+function checkDNB(r) {
+  const ft = r.fullTimeScore;
+  const home=ft.home, away=ft.away;
+  const pick = r.pick.toLowerCase();
+  if (home===away) { r.status='REFUND'; r.reason=`Draw No Bet pilih ${r.pick}. FT ${home}:${away}. Pertandingan seri → REFUND.`; }
+  else if ((pick==='home'||pick==='1') && home>away) { r.status='WIN'; r.reason=`DNB pilih Home. FT ${home}:${away}. Home menang → WIN.`; }
+  else if ((pick==='away'||pick==='2') && away>home) { r.status='WIN'; r.reason=`DNB pilih Away. FT ${home}:${away}. Away menang → WIN.`; }
+  else { r.status='LOSE'; r.reason=`DNB pilih ${r.pick}. FT ${home}:${away}. Tim yang dipilih kalah → LOSE.`; }
+  r.details = [['Market','Draw No Bet'],['Pick',r.pick],['FT Score',home+':'+away],['Hasil',r.status]];
+  return r;
+}
+
+function checkBTTS(r) {
+  const ft = r.fullTimeScore;
+  const home=ft.home, away=ft.away;
+  const both = home>0 && away>0;
+  const pick = r.pick.toLowerCase();
+  if (pick==='yes') { r.status=both?'WIN':'LOSE'; r.reason=`BTTS Yes. FT ${home}:${away}. ${both?'Kedua tim cetak gol → WIN.':'Salah satu tim tidak cetak gol → LOSE.'}` }
+  else { r.status=!both?'WIN':'LOSE'; r.reason=`BTTS No. FT ${home}:${away}. ${!both?'Ada tim yang tidak cetak gol → WIN.':'Kedua tim cetak gol → LOSE.'}` }
+  r.details = [['Market','BTTS'],['Pick',r.pick],['Home Goals',home],['Away Goals',away],['Hasil',r.status]];
+  return r;
+}
+
+function checkOddEven(r) {
+  const ft = r.fullTimeScore;
+  const total = ft.home + ft.away;
+  const isOdd = total % 2 !== 0;
+  const pick = r.pick.toLowerCase();
+  if (pick==='odd') { r.status=isOdd?'WIN':'LOSE'; r.reason=`Odd/Even pilih Odd. Total gol ${total}. ${isOdd?'Ganjil → WIN.':'Genap → LOSE.'}` }
+  else { r.status=!isOdd?'WIN':'LOSE'; r.reason=`Odd/Even pilih Even. Total gol ${total}. ${!isOdd?'Genap → WIN.':'Ganjil → LOSE.'}` }
+  r.details = [['Market','Odd/Even'],['Pick',r.pick],['Total Goal',total],['Ganjil/Genap',isOdd?'ODD':'EVEN'],['Hasil',r.status]];
+  return r;
+}
+
+// =============================================
+//  RENDER RESULTS
+// =============================================
+let currentFilter = 'all';
+
+function filterResults(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn';
+  });
+  if (btn) {
+    const map = {'all':'active-all','WIN':'active-win','LOSE':'active-lose','REFUND':'active-refund','PENDING':'active-pending','HALF WIN':'active-halfwin','HALF LOSE':'active-halflose'};
+    btn.classList.add(map[filter] || 'active-all');
+  }
+  renderResults();
+}
+
+function renderResults() {
+  const grid = document.getElementById('resultsGrid');
+  const filtered = currentFilter === 'all'
+    ? results
+    : results.filter(r => {
+        if (currentFilter === 'INVALID') return r.status === 'INVALID DATA';
+        return r.status === currentFilter;
+      });
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">${results.length?'TIDAK ADA HASIL UNTUK FILTER INI':'BELUM ADA DATA HASIL<br>Pergi ke Checker dan input data taruhan'}</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((r, i) => buildCard(r, i)).join('');
+}
+
+function statusToClass(status) {
+  const map = {
+    'WIN':'win','LOSE':'lose','REFUND':'refund',
+    'HALF WIN':'halfwin','HALF LOSE':'halflose',
+    'PENDING':'pending','VOID':'refund','INVALID DATA':'invalid'
+  };
+  return map[status] || 'pending';
+}
+
+function buildCard(r, idx) {
+  const cls = statusToClass(r.status);
+  const htScore = r.halfTimeScore ? `${r.halfTimeScore.home}:${r.halfTimeScore.away}` : '-';
+  const ftScore = r.fullTimeScore ? `${r.fullTimeScore.home}:${r.fullTimeScore.away}` : '-';
+  const odds = r.odds ? r.odds.toFixed(2) : '-';
+  const stakeDisplay = r.stake ? formatRupiah(r.stake) : '-';
+  const payoutDisplay = r.payout !== null && r.payout !== undefined ? formatRupiah(r.payout) : '-';
+  const profitDisplay = r.profit !== null && r.profit !== undefined ? formatRupiah(r.profit) : '-';
+  const profitClass = r.profit > 0 ? 'profit-positive' : r.profit < 0 ? 'profit-negative' : 'profit-neutral';
+  const mktDisplay = r.market || '-';
+  const pickDisplay = r.pick || '-';
+  const lineDisplay = r.line !== null && r.line !== undefined ? r.line : '';
+  const details = (r.details || []).map(d => `<div class="detail-row"><span>${d[0]}</span><span>${d[1]}</span></div>`).join('');
+  const teamDisplay = r.homeTeam && r.awayTeam ? `${r.homeTeam} <span style="color:var(--text-dim)">vs</span> ${r.awayTeam}` : (r.homeTeam || r.awayTeam || 'Unknown Match');
+
+  return `
+  <div class="result-card card-border-${cls}">
+    <div class="card-accent-${cls}"></div>
+    <div class="card-body">
+      <div class="card-header-row">
+        <span class="card-sport-tag">${r.sport || 'SPORT'}</span>
+        <span class="status-chip status-${cls}">${r.status}</span>
+      </div>
+      <div class="card-matchup">${teamDisplay}</div>
+      <div class="card-league">${r.league || '-'}</div>
+
+      <div class="card-info-grid">
+        <div class="info-cell">
+          <div class="info-label">MARKET</div>
+          <div class="info-value"><span class="market-badge">${mktDisplay}</span></div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">PICK</div>
+          <div class="info-value">${pickDisplay} ${lineDisplay ? '<span style="color:var(--text-dim);font-size:11px">('+lineDisplay+')</span>' : ''}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">ODDS</div>
+          <div class="info-value"><span class="odds-chip">@${odds}</span></div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">PROVIDER</div>
+          <div class="info-value" style="color:var(--purple)">${r.provider || '-'}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">BETTINGAN</div>
+          <div class="info-value"><span class="money-chip">${stakeDisplay}</span></div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">PAYOUT / PROFIT</div>
+          <div class="info-value"><span class="money-chip">${payoutDisplay}</span><br><span class="${profitClass}" style="font-size:11px">${profitDisplay}</span></div>
+        </div>
+      </div>
+
+      <div class="score-display">
+        <div class="score-part">
+          <div class="score-title">HALF TIME</div>
+          <div class="score-val">${htScore}</div>
+        </div>
+        <div class="score-divider">⚡</div>
+        <div class="score-part">
+          <div class="score-title">FULL TIME</div>
+          <div class="score-val">${ftScore}</div>
+        </div>
+      </div>
+
+      <div class="analysis-box">
+        <div class="analysis-title">🧠 ANALISIS</div>
+        <div class="analysis-text">${r.reason || '-'}</div>
+        <div class="analysis-detail" id="detail-${idx}">
+          ${details}
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="provider-tag">● ${r.provider || 'AUTO'}</span>
+      <button class="detail-toggle" onclick="toggleDetail(${idx})">▼ DETAIL CALC</button>
+    </div>
+  </div>`;
+}
+
+function toggleDetail(idx) {
+  const el = document.getElementById('detail-' + idx);
+  if (el) {
+    el.classList.toggle('show');
+    const btn = el.closest('.result-card').querySelector('.detail-toggle');
+    btn.textContent = el.classList.contains('show') ? '▲ HIDE CALC' : '▼ DETAIL CALC';
+  }
+}
+
+function updateResultBadge() {
+  document.getElementById('resultBadge').textContent = results.length;
+}
+
+// =============================================
+//  ANALYSIS PAGE
+// =============================================
+function renderAnalysisPage() {
+  const container = document.getElementById('analysisContainer');
+  if (!results.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔬</div><div class="empty-text">BELUM ADA DATA ANALISIS</div></div>`;
+    return;
+  }
+  container.innerHTML = results.map((r, i) => buildAnalysisPanel(r, i)).join('');
+}
+
+function buildAnalysisPanel(r, i) {
+  const cls = statusToClass(r.status);
+  const details = (r.details || []).map(d => `<div class="detail-row"><span>${d[0]}</span><span>${d[1]}</span></div>`).join('');
+  const htScore = r.halfTimeScore ? `${r.halfTimeScore.home}:${r.halfTimeScore.away}` : 'N/A';
+  const ftScore = r.fullTimeScore ? `${r.fullTimeScore.home}:${r.fullTimeScore.away}` : 'N/A';
+  const stakeDisplay = r.stake ? formatRupiah(r.stake) : '-';
+  const payoutDisplay = r.payout !== null && r.payout !== undefined ? formatRupiah(r.payout) : '-';
+  const profitDisplay = r.profit !== null && r.profit !== undefined ? formatRupiah(r.profit) : '-';
+  const profitClass = r.profit > 0 ? 'profit-positive' : r.profit < 0 ? 'profit-negative' : 'profit-neutral';
+
+  return `
+  <div class="panel" style="margin-bottom:16px;border-left:3px solid var(--${cls==='win'?'green-neon':cls==='lose'?'red-neon':cls==='refund'?'yellow':'cyan'})">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <span class="panel-title" style="margin-bottom:0;display:inline-flex">#${String(i+1).padStart(2,'0')} ${r.homeTeam||'?'} vs ${r.awayTeam||'?'}</span>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">${r.league||''} · ${r.sport||'Football'}</div>
+      </div>
+      <span class="status-chip status-${cls}">${r.status}</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="info-cell"><div class="info-label">PROVIDER</div><div class="info-value" style="color:var(--purple)">${r.provider||'-'}</div></div>
+      <div class="info-cell"><div class="info-label">MARKET</div><div class="info-value"><span class="market-badge">${r.market||'-'}</span></div></div>
+      <div class="info-cell"><div class="info-label">PICK + LINE</div><div class="info-value">${r.pick||'-'} ${r.line!==null&&r.line!==undefined?r.line:''}</div></div>
+      <div class="info-cell"><div class="info-label">ODDS</div><div class="info-value"><span class="odds-chip">@${r.odds?r.odds.toFixed(2):'-'}</span></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="info-cell"><div class="info-label">HALF TIME</div><div class="info-value">${htScore}</div></div>
+      <div class="info-cell"><div class="info-label">FULL TIME</div><div class="info-value">${ftScore}</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="info-cell"><div class="info-label">BETTINGAN</div><div class="info-value"><span class="money-chip">${stakeDisplay}</span></div></div>
+      <div class="info-cell"><div class="info-label">PAYOUT / RETURN</div><div class="info-value"><span class="money-chip">${payoutDisplay}</span></div></div>
+      <div class="info-cell"><div class="info-label">PROFIT / LOSS</div><div class="info-value ${profitClass}">${profitDisplay}</div></div>
+    </div>
+
+    <div class="analysis-box" style="border-left-color:var(--${cls==='win'?'green-neon':cls==='lose'?'red-neon':'cyan'})">
+      <div class="analysis-title">🔬 DETAIL PERHITUNGAN</div>
+      <div style="margin-bottom:8px">${details}</div>
+      <div class="analysis-text" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-subtle)"><strong style="color:var(--text-bright)">Kesimpulan:</strong><br>${r.reason||'-'}</div>
+    </div>
+    ${r.parseErrors&&r.parseErrors.length?`<div style="margin-top:8px;color:var(--yellow);font-size:11px;font-family:'Share Tech Mono',monospace">⚠ Parse Warnings: ${r.parseErrors.join(', ')}</div>`:''}
+  </div>`;
+}
+
+// =============================================
+//  STATISTICS
+// =============================================
+function updateStatistics() {
+  const total = results.length;
+  const wins = results.filter(r=>r.status==='WIN').length;
+  const losses = results.filter(r=>r.status==='LOSE').length;
+  const halfWin = results.filter(r=>r.status==='HALF WIN').length;
+  const halfLose = results.filter(r=>r.status==='HALF LOSE').length;
+  const refunds = results.filter(r=>r.status==='REFUND'||r.status==='VOID').length;
+  const pending = results.filter(r=>r.status==='PENDING').length;
+  const invalid = results.filter(r=>r.status==='INVALID DATA').length;
+
+  const settled = wins + losses + halfWin + halfLose + refunds;
+  const nonRefundSettled = wins + losses + halfWin + halfLose;
+  const winRate = nonRefundSettled > 0 ? (((wins + halfWin*0.5) / nonRefundSettled) * 100).toFixed(1) : 0;
+
+  const oddsArr = results.filter(r=>r.odds).map(r=>r.odds);
+  const avgOdds = oddsArr.length ? (oddsArr.reduce((a,b)=>a+b,0)/oddsArr.length).toFixed(2) : '-';
+  const totalStake = results.filter(r=>r.stake).reduce((a,r)=>a+r.stake,0);
+  const totalPayout = results.filter(r=>r.payout !== null && r.payout !== undefined).reduce((a,r)=>a+r.payout,0);
+  const totalProfit = results.filter(r=>r.profit !== null && r.profit !== undefined).reduce((a,r)=>a+r.profit,0);
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statWin').textContent = wins;
+  document.getElementById('statLose').textContent = losses;
+  document.getElementById('statRefund').textContent = refunds;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statRate').textContent = winRate + '%';
+  document.getElementById('statAvgOdds').textContent = avgOdds;
+  document.getElementById('statStake').textContent = totalStake ? formatRupiah(totalStake) : '-';
+  document.getElementById('statPayout').textContent = totalPayout ? formatRupiah(totalPayout) : '-';
+  const profitEl = document.getElementById('statProfit');
+  profitEl.textContent = totalProfit || totalProfit === 0 ? formatRupiah(totalProfit) : '-';
+  profitEl.classList.remove('profit-positive', 'profit-negative', 'profit-neutral');
+  profitEl.classList.add(totalProfit > 0 ? 'profit-positive' : totalProfit < 0 ? 'profit-negative' : 'profit-neutral');
+
+  // Bar
+  if (total > 0) {
+    const wPct = ((wins/total)*100).toFixed(1);
+    const lPct = ((losses/total)*100).toFixed(1);
+    const oPct = (((total-wins-losses)/total)*100).toFixed(1);
+    document.getElementById('barWin').style.width = wPct + '%';
+    document.getElementById('barLose').style.width = lPct + '%';
+    document.getElementById('barOther').style.width = oPct + '%';
+  }
+}
+
+
+// =============================================
+//  MIX PARLAY CALCULATOR ENGINE
+// =============================================
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function parseOddsNumber(value) {
+  if (value === null || value === undefined) return null;
+  const clean = String(value).trim().replace(',', '.').replace(/[^0-9.]/g, '');
+  if (!clean) return null;
+  const n = Number(clean);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function formatOdds(value) {
+  if (!Number.isFinite(Number(value))) return '-';
+  const fixed = Number(value).toFixed(6);
+  return fixed.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+}
+
+function parlayResultLabel(result) {
+  const map = {
+    full: 'Menang Full',
+    halfwin: 'Menang Setengah',
+    halflose: 'Kalah Setengah',
+    draw: 'Seri'
+  };
+  return map[result] || 'Menang Full';
+}
+
+function getParlayLegOdds(odds, result) {
+  const baseOdds = parseOddsNumber(odds);
+  if (!baseOdds) return { valid: false, value: 0, formula: 'Odds tidak valid' };
+
+  if (result === 'halfwin') {
+    return {
+      valid: true,
+      value: ((baseOdds - 1) / 2) + 1,
+      formula: `(${formatOdds(baseOdds)} - 1) / 2 + 1`
+    };
+  }
+  if (result === 'halflose') {
+    return { valid: true, value: 0.5, formula: '0.5' };
+  }
+  if (result === 'draw') {
+    return { valid: true, value: 1, formula: '1' };
+  }
+  return { valid: true, value: baseOdds, formula: formatOdds(baseOdds) };
+}
+
+function addParlayLeg() {
+  parlayLegs.push({ odds: '1.5', result: 'full' });
+  renderParlayLegs();
+  toast('Partai baru ditambahkan', 'success');
+}
+
+function resetParlay() {
+  parlayLegs = [
+    { odds: '1.5', result: 'full' },
+    { odds: '1.5', result: 'full' },
+    { odds: '1.5', result: 'full' }
+  ];
+  renderParlayLegs();
+  toast('Calculator Mix Parlay direset ke 3 partai', 'info');
+}
+
+function removeParlayLeg(index) {
+  if (parlayLegs.length <= 1) {
+    toast('Minimal harus ada 1 partai', 'error');
+    return;
+  }
+  parlayLegs.splice(index, 1);
+  renderParlayLegs();
+  toast('Partai dihapus', 'info');
+}
+
+function updateParlayOdds(index, value) {
+  if (!parlayLegs[index]) return;
+  parlayLegs[index].odds = value;
+  calculateParlay();
+}
+
+function updateParlayResult(index, result) {
+  if (!parlayLegs[index]) return;
+  parlayLegs[index].result = result;
+  renderParlayLegs();
+}
+
+function renderParlayLegs() {
+  const container = document.getElementById('parlayLegsContainer');
+  if (!container) return;
+
+  container.innerHTML = parlayLegs.map((leg, index) => {
+    const calc = getParlayLegOdds(leg.odds, leg.result);
+    const resultValue = calc.valid ? formatOdds(calc.value) : '-';
+    const safeOdds = escapeHtml(leg.odds);
+    const options = [
+      ['full', 'Menang Full'],
+      ['halfwin', 'Menang Setengah'],
+      ['halflose', 'Kalah Setengah'],
+      ['draw', 'Seri']
+    ].map(([value, label]) => `
+      <label class="parlay-option-line ${leg.result === value ? 'active' : ''}">
+        <input type="radio" name="parlayResult${index}" value="${value}" ${leg.result === value ? 'checked' : ''} onchange="updateParlayResult(${index}, this.value)">
+        <span>${label}</span>
+      </label>
+    `).join('');
+
+    return `
+      <div class="parlay-leg-card classic">
+        <div class="parlay-leg-actions">
+          <button class="btn btn-danger" style="width:100%;justify-content:center" onclick="removeParlayLeg(${index})">HAPUS -</button>
+        </div>
+
+        <div class="parlay-leg-field">
+          <label>Odds ${index + 1}</label>
+          <input class="input-styled" type="text" value="${safeOdds}" inputmode="decimal" oninput="updateParlayOdds(${index}, this.value)">
+        </div>
+
+        <div>
+          <div class="parlay-leg-result-title">Hasil Partai ${index + 1}</div>
+          <div class="parlay-option-stack">${options}</div>
+          <div class="parlay-leg-result-odds">Hasil Odds: <strong id="parlayLegResult${index}">${resultValue}</strong></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  calculateParlay();
+}
+
+function calculateParlay() {
+  const betInput = document.getElementById('parlayBetInput');
+  const betAmount = betInput ? (parseCurrencyAmount(betInput.value) || 0) : 0;
+
+  let totalOdds = 1;
+  let allValid = true;
+  const detailRows = [];
+  const formulaParts = [];
+
+  parlayLegs.forEach((leg, index) => {
+    const calc = getParlayLegOdds(leg.odds, leg.result);
+    const legValue = calc.valid ? calc.value : 0;
+    if (!calc.valid) allValid = false;
+    if (calc.valid) totalOdds *= legValue;
+    formulaParts.push(calc.valid ? formatOdds(legValue) : 'INVALID');
+
+    detailRows.push(`
+      <div class="parlay-detail-item">
+        <span>Partai ${index + 1} · ${parlayResultLabel(leg.result)}</span>
+        <span>${escapeHtml(leg.odds)} → ${calc.valid ? formatOdds(legValue) : 'INVALID'}</span>
+      </div>
+    `);
+  });
+
+  if (!allValid) totalOdds = 0;
+  const totalReturn = betAmount * totalOdds;
+  const finalResult = totalReturn - betAmount;
+
+  const oddsText = allValid ? formatOdds(totalOdds) : '-';
+  const returnText = formatRupiah(totalReturn);
+  const finalText = formatRupiah(finalResult);
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('parlayTotalLegs', parlayLegs.length);
+  setText('parlayTotalOdds', oddsText);
+  setText('parlayTopOdds', oddsText);
+  setText('parlayTotalReturn', returnText);
+  setText('parlayFinalResult', finalText);
+  setText('parlayTopFinal', finalText);
+  setText('parlayBetMirror', formatRupiah(betAmount));
+
+  const finalEl = document.getElementById('parlayFinalResult');
+  if (finalEl) {
+    finalEl.classList.remove('profit-positive', 'profit-negative', 'profit-neutral');
+    finalEl.classList.add(finalResult > 0 ? 'profit-positive' : finalResult < 0 ? 'profit-negative' : 'profit-neutral');
+  }
+  const topFinalEl = document.getElementById('parlayTopFinal');
+  if (topFinalEl) {
+    topFinalEl.classList.remove('profit-positive', 'profit-negative', 'profit-neutral');
+    topFinalEl.classList.add(finalResult > 0 ? 'profit-positive' : finalResult < 0 ? 'profit-negative' : 'profit-neutral');
+  }
+
+  const summaryEl = document.getElementById('parlaySummaryText');
+  if (summaryEl) {
+    if (!allValid) {
+      summaryEl.textContent = 'Ada odds yang belum valid. Pastikan semua odds berisi angka lebih dari 0.';
+    } else {
+      summaryEl.textContent = `(${formulaParts.join(' × ')}) × ${formatRupiah(betAmount)} = ${returnText}. Hasil akhir: ${finalText}.`;
+    }
+  }
+
+  const formulaBox = document.getElementById('parlayFormulaBox');
+  if (formulaBox) {
+    formulaBox.innerHTML = detailRows.join('') + `
+      <div class="parlay-detail-item"><span>Perkalian Odds</span><span>${formulaParts.join(' × ')}</span></div>
+      <div class="parlay-detail-item"><span>Total Return</span><span>${returnText}</span></div>
+      <div class="parlay-detail-item"><span>Hasil Akhir</span><span>${finalText}</span></div>
+    `;
+  }
+}
+
+// =============================================
+//  EXPORT
+// =============================================
+function exportCSV() {
+  if (!results.length) { toast('Tidak ada data untuk diexport', 'error'); return; }
+  const headers = ['Provider','Sport','Home','Away','League','Market','Pick','Line','Odds','Stake','Stake Source','Payout','Profit','HT','FT','Status','Reason'];
+  const rows = results.map(r => [
+    r.provider, r.sport, r.homeTeam, r.awayTeam, r.league,
+    r.market, r.pick, r.line, r.odds,
+    r.stake || '', r.stakeSource || '', r.payout ?? '', r.profit ?? '',
+    r.halfTimeScore ? r.halfTimeScore.home+':'+r.halfTimeScore.away : '',
+    r.fullTimeScore ? r.fullTimeScore.home+':'+r.fullTimeScore.away : '',
+    r.status,
+    '"' + (r.reason||'').replace(/"/g,'""') + '"'
+  ]);
+  const csv = [headers.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  downloadFile('sportbook_results.csv', csv, 'text/csv');
+  toast('CSV exported!', 'success');
+}
+
+function exportJSON() {
+  if (!results.length) { toast('Tidak ada data untuk diexport', 'error'); return; }
+  const data = results.map(r => ({
+    provider: r.provider, sport: r.sport,
+    homeTeam: r.homeTeam, awayTeam: r.awayTeam, league: r.league,
+    date: r.date, market: r.market, pick: r.pick, line: r.line, odds: r.odds,
+    stake: r.stake, stakeSource: r.stakeSource, payout: r.payout, profit: r.profit, payoutNote: r.payoutNote,
+    halfTimeScore: r.halfTimeScore, fullTimeScore: r.fullTimeScore,
+    status: r.status, reason: r.reason
+  }));
+  downloadFile('sportbook_results.json', JSON.stringify(data, null, 2), 'application/json');
+  toast('JSON exported!', 'success');
+}
+
+function downloadFile(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// =============================================
+//  INIT
+// =============================================
+document.addEventListener('DOMContentLoaded', () => {
+  updateProviderBadge();
+  renderParlayLegs();
+});
+</script>
+</body>
+</html>
