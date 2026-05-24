@@ -2618,6 +2618,7 @@ function parseTicket(raw) {
     market: '',
     pick: '',
     line: null,
+    teamSide: null,
     odds: null,
     stake: null,
     stakeSource: '',
@@ -2912,6 +2913,18 @@ function parseBetString(bet, obj) {
     return;
   }
 
+  // ── Home / Away Team Over/Under ─────────────────────────────────────────
+  // Contoh: "Away Team Over/Under over 4.5"  "Home Total Goals under 1.5"
+  // Wajib dicek SEBELUM regular Over/Under supaya tidak confuse.
+  const pTeamOU = betNoOdds.match(new RegExp('^(Home|Away)\\s+(?:Team\\s+)?(?:(?:Over\\s*[\\/\\\\]\\s*Under|O\\s*\\/\\s*U|Total\\s*Goals?|Goals?)\\s+)?(Over|Under|O|U)\\s+' + num + '(?:\\s+[\\d.]+)?\\s*$', 'i'));
+  if (pTeamOU) {
+    obj.market = 'TEAMOU';
+    obj.teamSide = pTeamOU[1].toLowerCase(); // 'home' or 'away'
+    obj.pick = /^O(ver)?$/i.test(pTeamOU[2]) ? 'Over' : 'Under';
+    obj.line = toFloat(pTeamOU[3]);
+    return;
+  }
+
   // Over/Under / Total Goal over-under.
   // Contoh: Over/Under Under 3, Over/Under Over 3.25, Total Goal Under 2.5.
   const pOU = betNoOdds.match(new RegExp('^(?:(?:Over\\s*\\/\\s*Under|O\\s*\\/\\s*U|Total\\s*Goal)\\s+)?(Over|Under|O|U)\\s+' + num + '(?:\\s+0)?\\s*$', 'i'));
@@ -3009,6 +3022,7 @@ function normalizeMarket(m) {
   if (/btts|both.teams/i.test(m)) return 'BTTS';
   if (/next.goal|first.goal|first.team.*scor/i.test(m)) return 'NEXTGOAL';
   if (/last.team.*scor|last.*to.*scor/i.test(m)) return 'LASTTOSCORE';
+  if (/^(home|away)\s+team\s+(?:over|under|o\/u|total)/i.test(m)) return 'TEAMOU';
   if (/odd|even/i.test(m)) return 'ODDEVEN';
   return m;
 }
@@ -3073,6 +3087,7 @@ function checkBet(obj) {
     case 'ODDEVEN': checked = checkOddEven(r); break;
     case 'NEXTGOAL': checked = checkNextGoal(r); break;
     case 'LASTTOSCORE': checked = checkLastTeamToScore(r); break;
+    case 'TEAMOU': checked = checkTeamOU(r); break;
     default:
       r.status = 'INVALID DATA';
       r.reason = `Market "${obj.market}" tidak dikenali oleh sistem. Mohon cek kembali data market yang diinput.`;
@@ -3409,36 +3424,43 @@ function determineFirstGoal(ht, ft) {
 
 // ─────────────────────────────────────────────────────────────────
 //  HELPER: Tentukan siapa yang CETAK GOL TERAKHIR dari HT/FT data
+//  Returns { team: 'home'|'away'|'none'|null, estimated: boolean }
+//  estimated=true: disimpulkan dari tim yang unggul di akhir periode
+//  (karena kedua tim cetak gol di periode yang sama)
 // ─────────────────────────────────────────────────────────────────
 function determineLastGoal(ht, ft) {
-  if (!ft) return null;
+  if (!ft) return { team: null, estimated: false };
   const htH = ht ? ht.home : 0;
   const htA = ht ? ht.away : 0;
   const ftH = ft.home;
   const ftA = ft.away;
 
-  if (ftH + ftA === 0) return 'none'; // tidak ada gol
+  if (ftH + ftA === 0) return { team: 'none', estimated: false };
 
-  // Cek babak kedua
   const sh_h = ftH - htH;
   const sh_a = ftA - htA;
 
   if (sh_h + sh_a > 0) {
-    if (sh_h > 0 && sh_a === 0) return 'home'; // hanya home cetak di babak 2 → home terakhir
-    if (sh_a > 0 && sh_h === 0) return 'away'; // hanya away cetak di babak 2 → away terakhir
-    // Kedua cetak di babak 2 → tidak bisa tentukan tanpa timeline
-    return null;
+    // Ada gol di babak 2
+    if (sh_h > 0 && sh_a === 0) return { team: 'home', estimated: false };
+    if (sh_a > 0 && sh_h === 0) return { team: 'away', estimated: false };
+    // Kedua tim cetak gol di babak 2 → pakai skor FT sebagai acuan
+    if (ftH > ftA) return { team: 'home', estimated: true };
+    if (ftA > ftH) return { team: 'away', estimated: true };
+    return { team: null, estimated: false }; // FT imbang → benar-benar tidak bisa tentukan
   }
 
-  // Tidak ada gol di babak 2 → cek babak pertama
+  // Tidak ada gol di babak 2 → analisis babak 1
   if (htH + htA > 0) {
-    if (htH > 0 && htA === 0) return 'home'; // hanya home cetak di babak 1
-    if (htA > 0 && htH === 0) return 'away'; // hanya away cetak di babak 1
-    // Kedua cetak di babak 1 → tidak bisa tentukan
-    return null;
+    if (htH > 0 && htA === 0) return { team: 'home', estimated: false };
+    if (htA > 0 && htH === 0) return { team: 'away', estimated: false };
+    // Kedua tim cetak gol di babak 1 → pakai skor HT sebagai acuan
+    if (htH > htA) return { team: 'home', estimated: true };
+    if (htA > htH) return { team: 'away', estimated: true };
+    return { team: null, estimated: false }; // HT imbang → tidak bisa tentukan
   }
 
-  return null;
+  return { team: null, estimated: false };
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -3501,26 +3523,67 @@ function checkLastTeamToScore(r) {
     return r;
   }
 
-  const lastScorer = determineLastGoal(ht, ft);
+  const { team: lastScorer, estimated } = determineLastGoal(ht, ft);
 
   if (lastScorer === 'none' || ft.home + ft.away === 0) {
     r.status = 'REFUND';
     r.reason = `Last Team To Score: Tidak ada gol dalam pertandingan. REFUND.`;
   } else if (lastScorer === null) {
     r.status = 'INVALID DATA';
-    r.reason = `Last Team To Score: Kedua tim cetak gol dalam periode yang sama sehingga tidak bisa menentukan tim terakhir yang cetak gol hanya dari data HT ${ht?ht.home+':'+ht.away:'-'} / FT ${ft.home+':'+ft.away}. Butuh timeline gol.`;
+    r.reason = `Last Team To Score: Skor akhir imbang dan kedua tim cetak gol dalam periode yang sama. Tidak bisa menentukan tim terakhir yang cetak gol. Butuh data timeline gol.`;
   } else {
     const won = lastScorer === pick;
     const scorerName = lastScorer === 'home' ? (r.homeTeam || 'Home') : (r.awayTeam || 'Away');
     r.status = won ? 'WIN' : 'LOSE';
-    r.reason = `Last Team To Score: Pilih ${pickName}. Tim terakhir yang mencetak gol dari data HT ${ht?ht.home+':'+ht.away:'-'} / FT ${ft.home+':'+ft.away} adalah ${scorerName}. Taruhan ${r.status}.`;
+    const htStr = ht ? ht.home+':'+ht.away : '-';
+    const estNote = estimated
+      ? ` ⚠️ Estimasi: kedua tim cetak gol di babak yang sama; ${scorerName} unggul di akhir periode.`
+      : '';
+    r.reason = `Last Team To Score: Pilih ${pickName}. Tim terakhir cetak gol: ${scorerName}.${estNote} Skor HT ${htStr} / FT ${ft.home+':'+ft.away}. Taruhan ${r.status}.`;
   }
 
   r.details = [
     ['Market', 'Last Team To Score'],
     ['Pick', pickName],
     ['HT Score', ht ? ht.home+':'+ht.away : '-'],
-    ['FT Score', ft ? ft.home+':'+ft.away : '-'],
+    ['FT Score', ft.home+':'+ft.away],
+    ['Hasil', r.status],
+  ];
+  return r;
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  CHECK: Home / Away Team Over/Under
+//  Hitung O/U berdasarkan gol TIM SPESIFIK (bukan total kedua tim)
+//  Contoh: "Away Team Over/Under over 4.5" → cek away goals saja
+// ─────────────────────────────────────────────────────────────────
+function checkTeamOU(r) {
+  const ft = r.fullTimeScore;
+  if (!ft) {
+    r.status = 'PENDING';
+    r.reason = 'Team Over/Under: Skor FT belum tersedia.';
+    r.details = [['Market','Team Over/Under'],['Pick',r.pick||'-'],['Hasil','PENDING']];
+    return r;
+  }
+
+  const side       = String(r.teamSide || '').toLowerCase(); // 'home' atau 'away'
+  const pick       = String(r.pick || '').toLowerCase();     // 'over' atau 'under'
+  const line       = r.line;
+  const sideLabel  = side === 'home' ? 'Home' : 'Away';
+  const teamGoals  = side === 'home' ? ft.home : ft.away;
+  const teamName   = side === 'home' ? (r.homeTeam || 'Home') : (r.awayTeam || 'Away');
+
+  // Reuse fungsi computeOU yang sudah mendukung quarter-line
+  const result = computeOU(teamGoals, line, pick);
+  r.status = result.status;
+  r.reason = `${sideLabel} Team O/U: Pilih ${pick==='over'?'Over':'Under'} ${line}. ${teamName} mencetak ${teamGoals} gol (FT ${ft.home}:${ft.away}). Taruhan ${r.status}.`;
+
+  r.details = [
+    ['Market', sideLabel + ' Team Over/Under'],
+    ['Tim', teamName],
+    ['Pick', (pick==='over'?'Over':'Under') + ' ' + line],
+    [sideLabel + ' Goals (FT)', teamGoals],
+    ['FT Score', ft.home+':'+ft.away],
     ['Hasil', r.status],
   ];
   return r;
@@ -3696,6 +3759,15 @@ function buildBetExplanationForMember(r) {
     const ft = r.fullTimeScore;
     const pickName = String(r.pick || '').toLowerCase() === 'home' ? (r.homeTeam || 'Home') : (r.awayTeam || 'Away');
     return `Pilihan Last Team To Score (Tim Terakhir Cetak Gol) untuk ${pickName}. Skor HT ${scoreText(ht)}, FT ${scoreText(ft)}. Maka hasil taruhan menjadi ${statusText}.`;
+  }
+
+  if (market === 'TEAMOU') {
+    const ft = r.fullTimeScore;
+    const side = String(r.teamSide || '').toLowerCase();
+    const sideLabel = side === 'home' ? 'Home' : 'Away';
+    const teamName = side === 'home' ? (r.homeTeam || 'Home') : (r.awayTeam || 'Away');
+    const teamGoals = ft ? (side === 'home' ? ft.home : ft.away) : '-';
+    return `Pilihan ${sideLabel} Team O/U ${r.pick} ${r.line}. ${teamName} mencetak ${teamGoals} gol (FT ${scoreText(ft)}). Maka hasil taruhan menjadi ${statusText}.`;
   }
 
   return cleanReasonForMember(r.reason);
